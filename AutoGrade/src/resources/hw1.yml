@@ -1,0 +1,22 @@
+- hostgroup:
+    name: app
+    checks:
+      - availability:
+          port: 3000
+          status: 200
+      - availability:
+          port: 80
+          status: 200
+      - availability:
+          port: 9999
+          status: 404
+      - version: 
+          cmd: node --version
+          range: ^6.x.0
+      - version: 
+         cmd: python --version
+         range: ^3.x.0
+      - version: 
+         cmd: java -version
+         range: ^1.7.0
+      - idempotency

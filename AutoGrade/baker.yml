@@ -1,0 +1,10 @@
+name: auto-grade
+vm:
+  ip: 192.168.99.44
+  memory: 2048
+lang:
+  - nodejs9
+services:
+  - docker
+tools:
+  - ansible

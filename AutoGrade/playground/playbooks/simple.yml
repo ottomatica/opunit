@@ -1,0 +1,7 @@
+---
+- hosts: coffeemaker
+  become: yes
+
+  tasks: 
+    - name: Install pip
+      apt: name=python-pip

@@ -1,0 +1,2 @@
+# coffeemaker ansible_ssh_port=2222 ansible_ssh_host=localhost ansible_ssh_user=root
+coffeemaker ansible_connection=docker

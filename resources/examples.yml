@@ -2,8 +2,9 @@
     name: app
     checks:
       - availability:
-          port: 3000
+          port: 4000
           status: 200
+          url: engr-csc326-staff/326-course-page/
       - availability:
           port: 9999
           status: 404

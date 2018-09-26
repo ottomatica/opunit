@@ -19,5 +19,12 @@
   "bugs": {
     "url": "https://github.com/ottomatica/opunit/issues"
   },
-  "homepage": "https://github.com/ottomatica/opunit#readme"
+  "homepage": "https://github.com/ottomatica/opunit#readme",
+  "dependencies": {
+    "fs-extra": "^7.0.0",
+    "js-yaml": "^3.12.0",
+    "lodash": "^4.17.11",
+    "request": "^2.88.0",
+    "yargs": "^12.0.2"
+  }
 }

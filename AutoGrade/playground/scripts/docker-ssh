@@ -1,5 +1,0 @@
-# https://github.com/jeroenpeeters/docker-ssh
-docker run -d -p 2222:22 \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -e FILTERS={\"name\":[\"^/coffeemaker$\"]} -e AUTH_MECHANISM=noAuth \
-  jeroenpeeters/docker-ssh

@@ -1,0 +1,9 @@
+- hostgroup:
+    name: app
+    checks:
+      - availability:
+          port: 3000
+          status: 200
+      - availability:
+          port: 9999
+          status: 404

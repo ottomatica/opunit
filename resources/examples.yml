@@ -8,3 +8,6 @@
       - availability:
           port: 9999
           status: 404
+      - version:          
+         cmd: python3 --version
+         range: ^3.x.0          

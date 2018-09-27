@@ -5,6 +5,9 @@
           port: 4000
           status: 200
           url: engr-csc326-staff/326-course-page/
+          setup: 
+            cmd: baker run serve
+            wait_for: Server running...
       - availability:
           port: 9999
           status: 404

@@ -5,8 +5,10 @@ const path     = require('path');
 const child_process = require('child_process');
 const yargs    = require('yargs');
 const yaml     = require('js-yaml');
+const chalk    = require('chalk');
 
 const Loader = require('./lib/inspect/checks/loader');
+const Reporter = require('./lib/inspect/report');
 const BakerConnector = require('./lib/harness/baker');
 
 // Register run command
@@ -36,17 +38,23 @@ async function main(baker_path, criteria_path)
 async function verify(baker_path, criteria_path)
 {
     let connector = new BakerConnector();
+    let reporter  = new Reporter();
 
     let loader = new Loader();
     let checks = await loader.loadChecks(criteria_path);
 
+    console.log();
+    console.log(chalk.underline('Checks'))
+    console.log()
+
     for( let check of checks )
     {
-        let instance = new check.module(connector);
+        let instance = new check.module(connector, reporter);
         let context = { bakerPath: baker_path };
         
-        console.log(`checking ${check.name}`);
+        console.log(chalk`\t{bold ${check.name} check}`);
         let results = await instance.check( context, check.args );
         instance.report( results );
     }
+    reporter.summary();
 }

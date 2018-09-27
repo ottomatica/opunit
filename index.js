@@ -6,7 +6,7 @@ const child_process = require('child_process');
 const yargs    = require('yargs');
 const yaml     = require('js-yaml');
 
-const Loader = require('./lib/inspect/loader');
+const Loader = require('./lib/inspect/checks/loader');
 const BakerConnector = require('./lib/harness/baker');
 
 // Register run command

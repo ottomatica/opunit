@@ -24,6 +24,12 @@ yargs.command('verify <baker_path> <criteria_path>', 'Verify an instance', (yarg
     let baker_path = argv.baker_path;
     let criteria_path = argv.criteria_path;
 
+    // Default to baker_path
+    if( !criteria_path )
+    {
+        criteria_path = path.join(baker_path, 'opunit.yml');
+    }
+
     await main(baker_path, criteria_path);
 });
 

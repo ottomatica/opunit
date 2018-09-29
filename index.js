@@ -12,7 +12,7 @@ const Reporter = require('./lib/inspect/report');
 const BakerConnector = require('./lib/harness/baker');
 
 // Register run command
-yargs.command('verify <baker_path> <criteria_path>', 'Verify an instance', (yargs) => {
+yargs.command('verify <baker_path> [criteria_path]', 'Verify an instance', (yargs) => {
 
     // yargs.positional('repo_url', {
     //     describe: 'Repository URL',
@@ -27,7 +27,12 @@ yargs.command('verify <baker_path> <criteria_path>', 'Verify an instance', (yarg
     // Default to baker_path
     if( !criteria_path )
     {
-        criteria_path = path.join(baker_path, 'opunit.yml');
+        criteria_path = path.join(baker_path, 'test', 'opunit.yml');
+        if( !fs.existsSync(criteria_path) )
+        {
+            console.error(chalk.red('Checks file was not provided, nor was default path found in test/opunit.yml'));
+            process.exit(1);
+        }
     }
 
     await main(baker_path, criteria_path);

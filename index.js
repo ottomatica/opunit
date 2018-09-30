@@ -12,7 +12,7 @@ const Reporter = require('./lib/inspect/report');
 const BakerConnector = require('./lib/harness/baker');
 
 // Register run command
-yargs.command('verify <baker_path> [criteria_path]', 'Verify an instance', (yargs) => {
+yargs.command('verify [baker_path] [criteria_path]', 'Verify an instance', (yargs) => {
 
     // yargs.positional('repo_url', {
     //     describe: 'Repository URL',
@@ -21,7 +21,7 @@ yargs.command('verify <baker_path> [criteria_path]', 'Verify an instance', (yarg
 
 }, async (argv) => {
     // Get id and source directory
-    let baker_path = argv.baker_path;
+    let baker_path = argv.baker_path ? argv.baker_path : process.cwd();
     let criteria_path = argv.criteria_path;
 
     // Default to baker_path

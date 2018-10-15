@@ -58,6 +58,8 @@ async function verify(env_address, criteria_path, connector_type, ssh_key)
         connector = new BakerConnector();
     let reporter  = new Reporter();
 
+    await connector.ready();
+
     let loader = new Loader();
     let checks = await loader.loadChecks(criteria_path);
 

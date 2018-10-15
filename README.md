@@ -11,7 +11,7 @@ npm link
 ```
 
 
-## Using Opunit:
+## Using Opunit
 Opunit uses a configuration file (opunit.yml) in the `/test` directory of you project. This is an example opunit.yml file. By running `opunit verify` in the root directory of your project, opunit runs the checks defined in the configuration file on the [Baker](https://github.com/ottomatica/Baker) environment of your project. 
 ``` yml
 - hostgroup:
@@ -54,3 +54,20 @@ Summary
 ```
 
 More examples of using Opunit can be found in Baker environments of [baker-examples](https://github.com/ottomatica/baker-examples) repository. 
+
+## Connectors
+Opunit has different connectors to be able to run checks on different kinds of environments. 
+
+### Baker Connector
+If you don't specify any, Opunit will use Baker connector by default; for example if opunit is run as:
+``` shell
+$ opunit verify {project path} {opunit.yml path}
+```
+By default, Opunit uses current working directory as `{project directory}`, and checks `/test/opunit.yml` of the project directory if nothing is specified. So, Opunit can be run from the root directory of a project that uses Baker, by running `opunit verify`.
+
+### ssh Connector
+If you use `-i` or `--ssh_key` option when running `opunit` command, Opunit will use the ssh connector. When using this connector, you must also use `use@hostname:port` (or `user@hostname` if using the default ssh port 22) format for the environment path:
+```
+$ opunit verify root@example.com:2222 {opunit.yml path} -i ~/.ssh/baker_rsa
+```
+Similar to the other connectors, if you are running the command from the project directory which contains `/test/opunit.yml`, you can run opunit without specifying `{opunit.yml path}`.

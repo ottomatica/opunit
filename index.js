@@ -11,9 +11,15 @@ const Loader = require('./lib/inspect/checks/loader');
 const Reporter = require('./lib/inspect/report');
 const BakerConnector = require('./lib/harness/baker');
 const SSHConnector = require('./lib/harness/ssh');
+const DockerConnector = require('./lib/harness/docker');
 
 // Register run command
-yargs.command('verify [env_address] [criteria_path]', 'Verify an instance', (yargs) => {
+yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
+    yargs.positional('criteria_path', {
+        describe: 'path to the opunit.yml file, default is cwd/test/opunit.yml',
+        type: 'string',
+        alias: 'c'
+    });
 
     yargs.positional('ssh_key', {
         describe: 'required when using ssh connector. give path to private ssh key',
@@ -21,16 +27,21 @@ yargs.command('verify [env_address] [criteria_path]', 'Verify an instance', (yar
         alias: 'i'
     });
 
+    yargs.positional('container', {
+        describe: 'required when using docker connector. give name or id of your container',
+        type: 'string',
+        alias: 't'
+    });
 }, async (argv) => {
     // Get id and source directory
-    let connector_type = argv.ssh_key ? 'ssh' : 'baker';
-    let env_address = argv.env_address ? argv.env_address : process.cwd();
+    let connector_type = argv.ssh_key ? 'ssh' : argv.container ? 'docker' : 'baker';
+    let env_address = argv.container || argv.env_address || process.cwd();
     let criteria_path = argv.criteria_path;
 
     // Default to baker_path
     if (!criteria_path) {
         // TODO: this needs cleanup, trying to get it to work...
-        criteria_path = path.join(argv.ssh_key ? process.cwd() : env_address, 'test', 'opunit.yml');
+        criteria_path = path.join(argv.ssh_key || argv.docker ? process.cwd() : env_address, 'test', 'opunit.yml');
         if( !fs.existsSync(criteria_path) )
         {
             console.error(chalk.red('Checks file was not provided, nor was default path found in test/opunit.yml'));
@@ -56,6 +67,8 @@ async function verify(env_address, criteria_path, connector_type, ssh_key)
         connector = new SSHConnector(env_address, ssh_key);
     else if (connector_type === 'baker')
         connector = new BakerConnector();
+    else if (connector_type === 'docker')
+        connector = new DockerConnector();
     let reporter  = new Reporter();
 
     await connector.ready();

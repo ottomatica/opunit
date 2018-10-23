@@ -12,10 +12,11 @@ npm link
 
 
 ## Using Opunit
-Opunit uses a configuration file (opunit.yml) in the `/test` directory of you project. This is an example opunit.yml file. By running `opunit verify` in the root directory of your project, opunit runs the checks defined in the configuration file on the [Baker](https://github.com/ottomatica/Baker) environment of your project.
+Opunit uses a configuration file (opunit.yml) in the `/test` directory of you project. This is an example opunit.yml file. By running `opunit verify` in the root directory of your project, opunit runs the checks defined in the configuration file on the [environment of your project](#connectors); this can be a VM, contaienr or even a remote server.
 
 ``` yml
-- hostgroup:
+- group:
+    description: "Basic checks for startup"
     checks:
       - availability:
           port: 8080

@@ -1,5 +1,5 @@
-- hostgroup:
-    name: app
+- group:
+    description: "Basic checks for startup"
     checks:
       - availability:
           port: 4000

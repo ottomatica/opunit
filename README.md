@@ -21,33 +21,33 @@ Opunit uses a configuration file (opunit.yml) in the `/test` directory of you pr
           port: 8080
           status: 200
           url: /
-          setup: 
-            cmd: baker run serve
+          setup:
+            cmd: node index.js
             wait_for: Started Application
       - version:          
          cmd: mysql --version
          range: ^8.x.x
       - version:          
-         cmd: java -version
-         range: ^1.8.x
+         cmd: node --version
+         range: ^10.x.x
 ```
 
-In this example opunit will run 3 checks. First one runs Baker command `baker run serve` and waits for "Started Application", then checks the reponse status for a request to `http://{Baker VM IP}/`. 
-The next two checks run `--version` commands for MySQL and Java inside the Baker environment and compare the actual version with the provided [semver range](https://semver.org).
+In this example opunit will run 3 checks. First one runs the command `node index.js` and waits for "Started Application", then checks the reponse status for a request to `http://{IP}/`.
+The next two checks run `--version` commands for MySQL and Java inside the environment and compare the actual version with the provided [semver range](https://semver.org).
 If all the checks pass, the output of opunit will look like this:
 
 ```
 Checks
 
         availability check
-        Setup: baker run serve
+        Setup: node index.js
         Resolved wait_for condition: Stdout matches "Started Application"
         Tearing down
-            ✔   [hibernate-spring] http://192.168.8.8:8080// expected: 200 actual: 200
+            ✔   [node-app] http://192.168.8.8:8080// expected: 200 actual: 200
         version check
             ✔   mysql --version: 8.0.12 > ^8.x.x => true
         version check
-            ✔   java -version: 1.8.0 > ^1.8.x => true
+            ✔   node --version: 10.12.0 > ^10.x.x => true
 
 Summary
 
@@ -58,7 +58,7 @@ Summary
 More examples of using Opunit can be found in Baker environments of [baker-examples](https://github.com/ottomatica/baker-examples) repository.
 
 ## Connectors
-Opunit has different connectors to be able to run checks on different kinds of environments.
+Opunit has different connectors to be able to run checks on different kinds of environments. See below for description of each one and how the can be used.
 
 ### Baker Connector
 If you don't specify any, Opunit will use Baker connector by default; for example if opunit is run as:

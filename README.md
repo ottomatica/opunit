@@ -11,7 +11,7 @@ npm link
 ```
 
 <center>
-<img width="801" alt="screen shot 2018-10-23 at 10 15 04" src="https://user-images.githubusercontent.com/9158546/47366908-9fe36900-d6ac-11e8-980d-0ace83a46a53.png">
+<img width="801" alt="screen shot 2018-10-23 at 10 55 00" src="https://user-images.githubusercontent.com/9158546/47369653-29e20080-d6b2-11e8-8098-b64c59d282c6.png">
 </center>
 
 ## Using Opunit

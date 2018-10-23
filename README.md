@@ -72,7 +72,7 @@ $ opunit verify root@example.com:2222 -c {opunit.yml path} -i ~/.ssh/baker_rsa
 Similar to the other connectors, if you are running the command from the project directory which contains `/test/opunit.yml`, you can run opunit without specifying `-c {opunit.yml path}`.
 
 ### Baker Connector
-If you don't specify any, Opunit will use Baker connector by default; for example if opunit is run as:
+If you don't specify any, Opunit will use [Baker](https://github.com/ottomatica/Baker) connector by default; for example if opunit is run as:
 ``` shell
 $ opunit verify {project path} -c {opunit.yml path}
 ```

@@ -10,6 +10,9 @@ npm install
 npm link
 ```
 
+<center>
+<img width="801" alt="screen shot 2018-10-23 at 10 15 04" src="https://user-images.githubusercontent.com/9158546/47366908-9fe36900-d6ac-11e8-980d-0ace83a46a53.png">
+</center>
 
 ## Using Opunit
 Opunit uses a configuration file (opunit.yml) in the `/test` directory of you project. This is an example opunit.yml file. By running `opunit verify` in the root directory of your project, opunit runs the checks defined in the configuration file on the [environment of your project](#connectors); this can be a VM, container or even a remote server.
@@ -23,7 +26,7 @@ Opunit uses a configuration file (opunit.yml) in the `/test` directory of you pr
           status: 200
           url: /
           setup:
-            cmd: node index.js
+            cmd: node app.js
             wait_for: Started Application
       - version:          
          cmd: mysql --version
@@ -33,7 +36,7 @@ Opunit uses a configuration file (opunit.yml) in the `/test` directory of you pr
          range: ^10.x.x
 ```
 
-In this example opunit will run 3 checks. First one runs the command `node index.js` and waits for "Started Application", then checks the reponse status for a request to `http://{IP}/`.
+In this example opunit will run 3 checks. First one runs the command `node app.js` and waits for "Started Application", then checks the reponse status for a request to `http://{IP}/`.
 The next two checks run `--version` commands for MySQL and Java inside the environment and compare the actual version with the provided [semver range](https://semver.org).
 If all the checks pass, the output of opunit will look like this:
 

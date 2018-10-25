@@ -2,12 +2,9 @@
 Simple tool for doing sanity checks on vms, and containers and remote servers. Written in pure node.js
 
 
-## Install from source
+## Install with npm
 ```
-git clone https://github.com/ottomatica/opunit
-cd opunit
-npm install
-npm link
+npm install -g opunit
 ```
 
 <center>
@@ -84,3 +81,15 @@ If you use `-t` or `--container` option when running `opunit` command, Opunit wi
 $ opunit verify -c {opunit.yml path} -t {docker container name or id}
 ```
 Similar to the other connectors, if you are running the command from the project directory which contains `/test/opunit.yml`, you can run opunit without specifying `-c {opunit.yml path}`.
+
+
+### Installing from Source
+
+If you want to play with opunit's source code, we suggesting installing and running things like this:
+
+```
+git clone https://github.com/ottomatica/opunit
+cd opunit
+npm install
+npm link
+```

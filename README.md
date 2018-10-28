@@ -1,4 +1,4 @@
-# Opunit🕵️‍
+# Opunit🕵️‍ | [![dependencies Status](https://david-dm.org/ottomatica/opunit/status.svg)](https://david-dm.org/ottomatica/opunit)
 Simple tool for doing sanity checks on vms, and containers and remote servers. Written in pure node.js
 
 

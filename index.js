@@ -29,8 +29,8 @@ yargs.command( 'verify [env_address] [criteria_path]', 'Verify an instance', ( y
     connector_type = argv.vagrant ? 'vagrant' : connector_type;
     let env_address = argv.container || argv.env_address || process.cwd();
     let criteria_path = argv.criteria_path;
-    let vm = argv.vagrant;
-    let path_to_opunit_yaml = argv.c ? argv.c : `${process.cwd()}/test/opunit.yml`;
+    // let vm = argv.vagrant;
+    // console.log( env_address );
 
     // Default to baker_path
     if ( !criteria_path ) {
@@ -41,25 +41,26 @@ yargs.command( 'verify [env_address] [criteria_path]', 'Verify an instance', ( y
             process.exit( 1 );
         }
     }
-
-    await main( env_address, criteria_path, connector_type, argv.ssh_key, vm, path_to_opunit_yaml );
+    env_address = argv.vagrant ? argv.vagrant : env_address;
+    
+    await main( env_address, criteria_path, connector_type, argv.ssh_key );
 } );
 
 // Turn on help and access argv
 yargs.help().argv;
 
-async function main( env_address, criteria_path, connector_type, ssh_key, vm, path_to_opunit_yaml ) {
-    await verify( env_address, criteria_path, connector_type, ssh_key, vm, path_to_opunit_yaml );
+async function main( env_address, criteria_path, connector_type, ssh_key ) {
+    await verify( env_address, criteria_path, connector_type, ssh_key );
 }
 
-async function verify( env_address, criteria_path, connector_type, ssh_key, vm, path_to_opunit_yaml ) {
+async function verify( env_address, criteria_path, connector_type, ssh_key ) {
     let connector = null;
     if ( connector_type === 'ssh' )
         connector = new SSHConnector( env_address, ssh_key );
     else if ( connector_type === 'baker' )
         connector = new BakerConnector();
     else if ( connector_type === 'vagrant' )
-        connector = new VagrantConnector();
+        connector = new VagrantConnector( env_address );
     let reporter = new Reporter();
 
     try {
@@ -67,7 +68,7 @@ async function verify( env_address, criteria_path, connector_type, ssh_key, vm, 
     } catch ( err ) {
         console.log( "Host is not running" );
         return;
-    } 
+    }
 
     let loader = new Loader();
     let checks = await loader.loadChecks( criteria_path );

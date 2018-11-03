@@ -49,29 +49,34 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
         }
     }
 
-    await main(env_address, criteria_path, connector_type, argv.ssh_key);
+    await main(env_address, criteria_path, connector_type, {ssh_key: argv.ssh_key, container: argv.container});
 });
 
 // Turn on help and access argv
 yargs.help().argv;
 
-async function main(env_address, criteria_path, connector_type, ssh_key)
+async function main(env_address, criteria_path, connector_type, args)
 {
-    await verify(env_address, criteria_path, connector_type, ssh_key);
+    await verify(env_address, criteria_path, connector_type, args);
 }
 
-async function verify(env_address, criteria_path, connector_type, ssh_key)
+async function verify(env_address, criteria_path, connector_type, args)
 {
     let connector = null;
     if (connector_type === 'ssh')
-        connector = new SSHConnector(env_address, ssh_key);
+        connector = new SSHConnector(env_address, args.ssh_key);
     else if (connector_type === 'baker')
         connector = new BakerConnector();
     else if (connector_type === 'docker')
-        connector = new DockerConnector();
+        connector = new DockerConnector(args.container);
     let reporter  = new Reporter();
 
-    await connector.ready();
+    try {
+        await connector.ready();
+    } catch (error) {
+        console.error(chalk.red(` => ${error}`));
+        process.exit(1);
+    }
 
     let loader = new Loader();
     let checks = await loader.loadChecks(criteria_path);

@@ -58,6 +58,63 @@ Summary
 
 More examples of using Opunit can be found in Baker environments of [baker-examples](https://github.com/ottomatica/baker-examples) repository.
 
+## Checks
+Opunit has many checks available for common verification tasks. See the documentation below.
+
+`contains` supports checking contents of the file. This can be useful when there is a template file and you want to check and make sure it is updated with the correct values in the file.
+
+```yaml
+- check:
+    - contains: 
+         file: /home/jenkins/settings/login.properties
+         string: 'username: root'
+```
+
+`status` = `true` | `false`
+
+Expected output format:
+```
+contains check
+   ✔   [/home/jenkins/settings/login.properties] contains [username: root] status: true
+```
+
+---
+
+`service` supports checking the status of a system service (e.g. systemd).
+
+```
+- service:
+   name: mysql
+   status: active
+- service:
+   name: shouldntexist
+   status: none
+```
+`status` = `active` | `inactive` | `none`
+
+Expected output:
+```
+service check
+      ✔   [mysql] expected: active actual: active
+service check
+      ✔   [shouldntexist] expected: none actual: none
+```
+
+---
+
+`reachable` determines whether a resource, such as a url, domain, or path is accessible from the instance. This check is good for determining whether dns or firewalls are configured appropriately.
+
+```yaml
+reachable:
+  - google.com
+  - nope.com/404.html
+  - reallyImportantFile.txt
+```
+
+---
+
+
+
 ## Connectors
 Opunit has different connectors to be able to run checks on different kinds of environments. See below for description of each one and how the can be used.
 

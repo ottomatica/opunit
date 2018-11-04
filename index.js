@@ -12,6 +12,7 @@ const Reporter = require('./lib/inspect/report');
 const BakerConnector = require('./lib/harness/baker');
 const SSHConnector = require('./lib/harness/ssh');
 const DockerConnector = require('./lib/harness/docker');
+const VagrantConnector = require( './lib/harness/vagrant' );
 
 // Register run command
 yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
@@ -34,7 +35,7 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
     });
 }, async (argv) => {
     // Get id and source directory
-    let connector_type = argv.ssh_key ? 'ssh' : argv.container ? 'docker' : 'baker';
+    let connector_type = argv.ssh_key ? 'ssh' : argv.container ? 'docker' : argv.vagrant ? 'vagrant' : 'baker';
     let env_address = argv.container || argv.env_address || process.cwd();
     let criteria_path = argv.criteria_path;
 
@@ -49,29 +50,42 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
         }
     }
 
-    await main(env_address, criteria_path, connector_type, argv.ssh_key);
+    env_address = argv.vagrant ? argv.vagrant : env_address;
+    await main(env_address, criteria_path, connector_type, {ssh_key: argv.ssh_key, container: argv.container});
 });
 
 // Turn on help and access argv
 yargs.help().argv;
 
-async function main(env_address, criteria_path, connector_type, ssh_key)
+async function main(env_address, criteria_path, connector_type, args)
 {
-    await verify(env_address, criteria_path, connector_type, ssh_key);
+    await verify(env_address, criteria_path, connector_type, args);
 }
 
-async function verify(env_address, criteria_path, connector_type, ssh_key)
+async function verify(env_address, criteria_path, connector_type, args)
 {
     let connector = null;
     if (connector_type === 'ssh')
-        connector = new SSHConnector(env_address, ssh_key);
+        connector = new SSHConnector(env_address, args.ssh_key);
     else if (connector_type === 'baker')
         connector = new BakerConnector();
     else if (connector_type === 'docker')
-        connector = new DockerConnector();
+        connector = new DockerConnector(args.container);
+    else if ( connector_type === 'vagrant' ) 
+        connector = new VagrantConnector();
+    
     let reporter  = new Reporter();
 
-    await connector.ready();
+    try {
+        await connector.ready();
+    } catch (error) {
+        console.error(chalk.red(` => ${error}`));
+        process.exit(1);
+    }
+
+    // setup ssh-config for vagrant if we know the connector is ready
+    if ( connector_type === 'vagrant' )
+        await connector.getSshConfig();
 
     let loader = new Loader();
     let checks = await loader.loadChecks(criteria_path);

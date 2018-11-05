@@ -12,6 +12,7 @@ const Reporter = require('./lib/inspect/report');
 const BakerConnector = require('./lib/harness/baker');
 const SSHConnector = require('./lib/harness/ssh');
 const DockerConnector = require('./lib/harness/docker');
+const VagrantConnector = require( './lib/harness/vagrant' );
 
 // Register run command
 yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
@@ -34,8 +35,8 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
     });
 }, async (argv) => {
     // Get id and source directory
-    let connector_type = argv.ssh_key ? 'ssh' : argv.container ? 'docker' : 'baker';
-    let env_address = argv.container || argv.env_address || process.cwd();
+    let connector_type = argv.ssh_key ? 'ssh' : argv.container ? 'docker' : argv.vagrant ? 'vagrant' : 'baker';
+    let env_address = argv.container || argv.env_address || argv.vagrant || process.cwd();
     let criteria_path = argv.criteria_path;
 
     // Default to baker_path
@@ -69,6 +70,12 @@ async function verify(env_address, criteria_path, connector_type, args)
         connector = new BakerConnector();
     else if (connector_type === 'docker')
         connector = new DockerConnector(args.container);
+    else if (connector_type === 'vagrant') {
+        connector = new VagrantConnector();
+        // setup ssh-config for vagrant if we know the connector is ready
+        await connector.getSshConfig();
+    }
+
     let reporter  = new Reporter();
 
     let context = { bakerPath: env_address };

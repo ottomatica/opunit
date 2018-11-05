@@ -12,6 +12,20 @@ You can use GitHub issue tracker to submit an enhancement suggestions for opunit
 
 If you want to contribute to opunit source code but you are not sure where to start, see #enhancement and #bug issues that you might be able to address. If you have an idea for enhancement, before you start implementing the enhancement, make sure to open an issue and discuss about the idea with organizers. This will help make sure the enhancement that you want to work on is a right addition in accordance with goals of this project.
 
+### Commit messages
+
+We use [conventional commit message format](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) to be able to auto-generate our changelog. Conventional commit message format is `<type>[optional scope]: <description>`. The type can be `fix | feat | BREAKING CHANGE | chore | docs | style | refactor` and the _optional_ scope can be `connector | check` or anything else that would make sense. You can use multiple types, for example if adding a `feat` that is also a `BREAKING CHANGE`, your commit message can be:
+
+```
+feat: allow provided config object to extend other configs
+
+BREAKING CHANGE: `extends` key in config file is now used for extending other config files
+
+fixes #12
+```
+
+To help with writing these longer commit messages and for consistency, we have a dev-dependency ([commitizen](https://github.com/commitizen/cz-cli)). If you choose to use commitizen for writing your commit messages, simply run `npm run commit` and it will ask you to fill in some information and then commits your changes for you!
+
 ### Pull Request
 
 Implemented a feature enhacement or fixed a bug? Open a PR and make sure to complete the PR template with as much details as possible. One of the organizers will review your proposed changes and respond to your PR.

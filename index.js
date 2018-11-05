@@ -71,7 +71,8 @@ async function verify(env_address, criteria_path, connector_type, ssh_key)
         connector = new DockerConnector();
     let reporter  = new Reporter();
 
-    await connector.ready();
+    let context = { bakerPath: env_address };
+    await connector.ready(context);
 
     let loader = new Loader();
     let checks = await loader.loadChecks(criteria_path);
@@ -83,7 +84,6 @@ async function verify(env_address, criteria_path, connector_type, ssh_key)
     for( let check of checks )
     {
         let instance = new check.module(connector, reporter);
-        let context = { bakerPath: env_address };
         
         console.log(chalk`\t{bold ${check.name} check}`);
         let results = await instance.check( context, check.args );

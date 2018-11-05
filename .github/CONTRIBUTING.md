@@ -14,7 +14,7 @@ If you want to contribute to opunit source code but you are not sure where to st
 
 ### Commit messages
 
-We use [conventional commit message format](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) to be able to auto-generate our changelog. Conventional commit message format is `<type>[optional scope]: <description>`. The type can be `fix | feat | BREAKING CHANGE | chore | docs | style | refactor | build` and the _optional_ scope can be `connector | check` or anything else that would make sense. A simple example if for updating dependencies `build(deps): Bump X from 1.2.0 to 1.3.0`
+We use [conventional commit message format](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) to be able to auto-generate our changelog. Conventional commit message format is `<type>[optional scope]: <description>`. The type can be `fix | feat | BREAKING CHANGE | chore | docs | style | refactor | build` and the _optional_ scope can be `connector | check` or anything else that would make sense. A simple example for updating a dependency is `build(deps): Bump X from 1.2.0 to 1.3.0`.
 
 You can also use multiple types, for example if adding a `feat` that is also a `BREAKING CHANGE`, your commit message can be:
 

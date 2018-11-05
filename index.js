@@ -24,7 +24,6 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
     yargs.positional('ssh_key', {
         describe: 'required when using ssh connector. give path to private ssh key',
         type: 'string',
-        alias: 'i'
     });
 
     yargs.positional('container', {
@@ -32,24 +31,60 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
         type: 'string',
         alias: 't'
     });
-}, async (argv) => {
-    // Get id and source directory
-    let connector_type = argv.ssh_key ? 'ssh' : argv.container ? 'docker' : argv.vagrant ? 'vagrant' : 'baker';
-    let env_address = argv.container || argv.env_address || argv.vagrant || process.cwd();
-    let criteria_path = argv.criteria_path;
 
-    // Default to baker_path
-    if (!criteria_path) {
-        // TODO: this needs cleanup, trying to get it to work...
-        criteria_path = path.join(argv.ssh_key || argv.docker || argv.vagrant ? process.cwd() : env_address, 'test', 'opunit.yml');
-        if( !fs.existsSync(criteria_path) )
-        {
-            console.error(chalk.red('Checks file was not provided, nor was default path found in test/opunit.yml'));
-            process.exit(1);
+    yargs.positional('inventory', {
+        describe: 'path to inventory file',
+        type: 'string',
+        alias: 'i'
+    });
+
+}, async (argv) => {
+
+    if(argv.inventory) {
+        let inventory = yaml.safeLoad(await fs.readFile(argv.inventory, 'utf8'));
+        for(let group of inventory) {
+            let connector_type = Object.keys(group)[0];
+
+            for(let i = 0; i < group[connector_type].length; i++) {
+
+                console.log('\n', group[connector_type][i], '\n');
+                let env_address = group[connector_type][i].address;
+                let criteria_path = group[connector_type][i].criteria_path || argv.criteria_path;
+                
+                if (!criteria_path) {
+                    criteria_path =  path.join(process.cwd(), 'test', 'opunit.yml');
+                    if( !fs.existsSync(criteria_path) )
+                    {
+                        console.error(chalk.red(`${connector_type}: criteria file (opunit.yml) was not provided, nor was default path found in test/opunit.yml`));
+                        console.error(chalk.red(`Skipping...`));
+                        continue;
+                    }
+                }
+    
+                await main(env_address, criteria_path, connector_type, {ssh_key: group.ssh ? (group.ssh[i].private_key || group.ssh[i].ssh_key) : undefined, container: group.docker ? group.docker[i].name || group.docker[i].id : undefined});
+            }
         }
     }
+    
+    else {
+        // Get id and source directory
+        let connector_type = argv.ssh_key ? 'ssh' : argv.container ? 'docker' : argv.vagrant ? 'vagrant' : 'baker';
+        let env_address = argv.container || argv.env_address || argv.vagrant || process.cwd();
+        let criteria_path = argv.criteria_path;
 
-    await main(env_address, criteria_path, connector_type, {ssh_key: argv.ssh_key, container: argv.container});
+        // Default to baker_path
+        if (!criteria_path) {
+            // TODO: this needs cleanup, trying to get it to work...
+            criteria_path = path.join(argv.ssh_key || argv.docker || argv.vagrant ? process.cwd() : env_address, 'test', 'opunit.yml');
+            if( !fs.existsSync(criteria_path) )
+            {
+                console.error(chalk.red('Checks file was not provided, nor was default path found in test/opunit.yml'));
+                process.exit(1);
+            }
+        }
+
+        await main(env_address, criteria_path, connector_type, {ssh_key: argv.ssh_key, container: argv.container});
+    }
 });
 
 // Turn on help and access argv

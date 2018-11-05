@@ -42,7 +42,7 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
     // Default to baker_path
     if (!criteria_path) {
         // TODO: this needs cleanup, trying to get it to work...
-        criteria_path = path.join(argv.ssh_key || argv.docker ? process.cwd() : env_address, 'test', 'opunit.yml');
+        criteria_path = path.join(argv.ssh_key || argv.docker || argv.vagrant ? process.cwd() : env_address, 'test', 'opunit.yml');
         if( !fs.existsSync(criteria_path) )
         {
             console.error(chalk.red('Checks file was not provided, nor was default path found in test/opunit.yml'));

@@ -48,7 +48,7 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
             for(let i = 0; i < group[connector_type].length; i++) {
 
                 console.log('\n', group[connector_type][i], '\n');
-                let env_address = group[connector_type][i].address;
+                let env_address = group[connector_type][i].target || group[connector_type][i].instance;
                 let criteria_path = group[connector_type][i].criteria_path || argv.criteria_path;
                 
                 if (!criteria_path) {

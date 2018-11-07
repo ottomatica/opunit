@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const _        = require('lodash');
 const fs       = require('fs-extra');
 const path     = require('path');
 const child_process = require('child_process');
@@ -12,6 +11,7 @@ const Reporter = require('./lib/inspect/report');
 const BakerConnector = require('./lib/harness/baker');
 const SSHConnector = require('./lib/harness/ssh');
 const DockerConnector = require('./lib/harness/docker');
+const VagrantConnector = require( './lib/harness/vagrant' );
 
 // Register run command
 yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
@@ -24,7 +24,6 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
     yargs.positional('ssh_key', {
         describe: 'required when using ssh connector. give path to private ssh key',
         type: 'string',
-        alias: 'i'
     });
 
     yargs.positional('container', {
@@ -32,46 +31,94 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
         type: 'string',
         alias: 't'
     });
-}, async (argv) => {
-    // Get id and source directory
-    let connector_type = argv.ssh_key ? 'ssh' : argv.container ? 'docker' : 'baker';
-    let env_address = argv.container || argv.env_address || process.cwd();
-    let criteria_path = argv.criteria_path;
 
-    // Default to baker_path
-    if (!criteria_path) {
-        // TODO: this needs cleanup, trying to get it to work...
-        criteria_path = path.join(argv.ssh_key || argv.docker ? process.cwd() : env_address, 'test', 'opunit.yml');
-        if( !fs.existsSync(criteria_path) )
-        {
-            console.error(chalk.red('Checks file was not provided, nor was default path found in test/opunit.yml'));
-            process.exit(1);
+    yargs.positional('inventory', {
+        describe: 'path to inventory file',
+        type: 'string',
+        alias: 'i'
+    });
+
+}, async (argv) => {
+
+    if(argv.inventory) {
+        let inventory = yaml.safeLoad(await fs.readFile(argv.inventory, 'utf8'));
+        for(let group of inventory) {
+            let connector_type = Object.keys(group)[0];
+
+            for(let i = 0; i < group[connector_type].length; i++) {
+
+                console.log('\n', group[connector_type][i], '\n');
+                let env_address = group[connector_type][i].target || group[connector_type][i].instance;
+                let criteria_path = group[connector_type][i].criteria_path || argv.criteria_path;
+                
+                if (!criteria_path) {
+                    criteria_path =  path.join(process.cwd(), 'test', 'opunit.yml');
+                    if( !fs.existsSync(criteria_path) )
+                    {
+                        console.error(chalk.red(`${connector_type}: criteria file (opunit.yml) was not provided, nor was default path found in test/opunit.yml`));
+                        console.error(chalk.red(`Skipping...`));
+                        continue;
+                    }
+                }
+    
+                await main(env_address, criteria_path, connector_type, {ssh_key: group.ssh ? (group.ssh[i].private_key || group.ssh[i].ssh_key) : undefined, container: group.docker ? group.docker[i].name || group.docker[i].id : undefined});
+            }
         }
     }
+    
+    else {
+        // Get id and source directory
+        let connector_type = argv.ssh_key ? 'ssh' : argv.container ? 'docker' : argv.vagrant ? 'vagrant' : 'baker';
+        let env_address = argv.container || argv.env_address || argv.vagrant || process.cwd();
+        let criteria_path = argv.criteria_path;
 
-    await main(env_address, criteria_path, connector_type, argv.ssh_key);
+        // Default to baker_path
+        if (!criteria_path) {
+            // TODO: this needs cleanup, trying to get it to work...
+            criteria_path = path.join(argv.ssh_key || argv.docker || argv.vagrant ? process.cwd() : env_address, 'test', 'opunit.yml');
+            if( !fs.existsSync(criteria_path) )
+            {
+                console.error(chalk.red('Checks file was not provided, nor was default path found in test/opunit.yml'));
+                process.exit(1);
+            }
+        }
+
+        await main(env_address, criteria_path, connector_type, {ssh_key: argv.ssh_key, container: argv.container});
+    }
 });
 
 // Turn on help and access argv
 yargs.help().argv;
 
-async function main(env_address, criteria_path, connector_type, ssh_key)
+async function main(env_address, criteria_path, connector_type, args)
 {
-    await verify(env_address, criteria_path, connector_type, ssh_key);
+    await verify(env_address, criteria_path, connector_type, args);
 }
 
-async function verify(env_address, criteria_path, connector_type, ssh_key)
+async function verify(env_address, criteria_path, connector_type, args)
 {
     let connector = null;
     if (connector_type === 'ssh')
-        connector = new SSHConnector(env_address, ssh_key);
+        connector = new SSHConnector(env_address, args.ssh_key);
     else if (connector_type === 'baker')
         connector = new BakerConnector();
     else if (connector_type === 'docker')
-        connector = new DockerConnector();
+        connector = new DockerConnector(args.container);
+    else if (connector_type === 'vagrant') {
+        connector = new VagrantConnector();
+        // setup ssh-config for vagrant if we know the connector is ready
+        await connector.getSshConfig();
+    }
+
     let reporter  = new Reporter();
 
-    await connector.ready();
+    let context = { bakerPath: env_address };
+    try {
+        await connector.ready(context);
+    } catch (error) {
+        console.error(chalk.red(` => ${error}`));
+        process.exit(1);
+    }
 
     let loader = new Loader();
     let checks = await loader.loadChecks(criteria_path);
@@ -83,7 +130,6 @@ async function verify(env_address, criteria_path, connector_type, ssh_key)
     for( let check of checks )
     {
         let instance = new check.module(connector, reporter);
-        let context = { bakerPath: env_address };
         
         console.log(chalk`\t{bold ${check.name} check}`);
         let results = await instance.check( context, check.args );

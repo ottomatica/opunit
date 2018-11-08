@@ -67,15 +67,14 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
     }
 
     else {
-        // Get id and source directory
-        let connector_type = await selectConnector(argv.env_address);
-        let env_address = argv.container || argv.env_address || argv.vagrant || process.cwd();
+        let connector = await selectConnector(argv);
+        let env_address = argv.env_address || process.cwd();
         let criteria_path = argv.criteria_path;
 
         // Default to baker_path
         if (!criteria_path) {
             // TODO: this needs cleanup, trying to get it to work...
-            criteria_path = path.join( connector_type == 'ssh' || connector_type == 'docker' || connector_type == 'vagrant' ? process.cwd() : env_address, 'test', 'opunit.yml' );
+            criteria_path = path.join(process.cwd(), 'test', 'opunit.yml');
             if( !fs.existsSync(criteria_path) )
             {
                 console.error(chalk.red('Checks file was not provided, nor was default path found in test/opunit.yml'));
@@ -83,42 +82,24 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
             }
         }
 
-        await main(env_address, criteria_path, connector_type, {ssh_key: argv.ssh_key, container: argv.container});
+        await main(env_address, criteria_path, connector, {ssh_key: argv.ssh_key, container: argv.container});
     }
 });
 
 // Turn on help and access argv
 yargs.help().argv;
 
-async function main(env_address, criteria_path, connector_type, args)
+async function main(env_address, criteria_path, connector, args)
 {
-    await verify(env_address, criteria_path, connector_type, args);
+    await verify(env_address, criteria_path, connector, args);
 }
 
-async function verify(env_address, criteria_path, connector_type, args)
+async function verify(env_address, criteria_path, connector)
 {
-    let connector = null;
-    if (connector_type === 'ssh')
-        connector = new SSHConnector(env_address, args.ssh_key);
-    else if (connector_type === 'baker')
-        connector = new BakerConnector();
-    else if (connector_type === 'docker')
-        connector = new DockerConnector( env_address || args.container );
-    else if (connector_type === 'vagrant') {
-        connector = new VagrantConnector();
-        // setup ssh-config for vagrant if we know the connector is ready
-        await connector.getSshConfig();
-    }
 
     let reporter  = new Reporter();
 
     let context = { bakerPath: env_address };
-    try {
-        await connector.ready(context);
-    } catch (error) {
-        console.error(chalk.red(` => ${error}`));
-        process.exit(1);
-    }
 
     let loader = new Loader();
     let checks = await loader.loadChecks(criteria_path);
@@ -138,23 +119,40 @@ async function verify(env_address, criteria_path, connector_type, args)
     reporter.summary();
 }
 
-async function selectConnector( env_address ) {
-    const current_path = process.cwd();
-    let connector_type = null;
-    
-    if ( await fs.exists( path.join( current_path, 'Baker.yml' ) ) ) {
-        connector_type = 'baker';
-    } else if ( await fs.exists( path.join( current_path, 'Vagrantfile' ) ) ) {
-        connector_type = 'vagrant';
-    } else if ( env_address !== undefined && env_address.match( /[@:]+/ ) ) {
-        connector_type = 'ssh';
-    } else if ( env_address !== undefined && await ( new DockerConnector( env_address ) ).ready() ) {
-        connector_type = 'docker';
-    } else if ( env_address !== undefined && await vagrantVMExists( env_address ) ) {
-        connector_type = 'vagrant';
+async function selectConnector(argv) {
+
+    const cwd = process.cwd();
+    let connector = null;
+
+    if (!argv.env_address && await fs.exists(path.join(cwd, 'Baker.yml'))) {
+        connector = new BakerConnector();
     }
 
-    return connector_type;
+    else if (!argv.env_address && await fs.exists(path.join(cwd, 'Vagrantfile'))) {
+        connector = new VagrantConnector(true);
+    }
+
+    else if (argv.env_address && argv.env_address.match(/[@:]+/)) {
+        connector = new SSHConnector(argv.env_address, argv.ssh_key);
+    }
+
+    else if (argv.env_address && await (new DockerConnector(argv.env_address)).containerExists()) {
+        connector = new DockerConnector(argv.env_address || argv.container);
+    }
+
+    else if (argv.env_address && await vagrantVMExists(argv.env_address)) {
+        connector = new VagrantConnector(false, argv.env_address);
+    }
+
+    try {
+        let context = { bakerPath: argv.env_address || process.cwd() };
+        await connector.ready(context);
+    } catch (error) {
+        console.error(chalk.red(` => ${error}`));
+        process.exit(1);
+    }
+
+    return connector;
 }
 
 async function vagrantVMExists( env_address ) {

@@ -136,12 +136,12 @@ async function selectConnector(argv) {
         connector = new SSHConnector(argv.env_address, argv.ssh_key);
     }
 
-    else if (argv.env_address && await (new DockerConnector(argv.env_address)).containerExists()) {
-        connector = new DockerConnector(argv.env_address || argv.container);
+    else if ( argv.env_address && await vagrantVMExists( argv.env_address ) ) {
+        connector = new VagrantConnector( false, argv.env_address );
     }
 
-    else if (argv.env_address && await vagrantVMExists(argv.env_address)) {
-        connector = new VagrantConnector(false, argv.env_address);
+    else if (argv.env_address && await (new DockerConnector(argv.env_address)).containerExists()) {
+        connector = new DockerConnector(argv.env_address || argv.container);
     }
 
     try {

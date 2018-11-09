@@ -144,6 +144,11 @@ async function selectConnector(argv) {
         connector = new DockerConnector(argv.env_address || argv.container);
     }
 
+    if(!connector) {
+        console.error(chalk.red(` => No environment could be found with the given name`));
+        process.exit(1);
+    }
+
     try {
         let context = { bakerPath: argv.env_address || process.cwd() };
         await connector.ready(context);

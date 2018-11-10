@@ -54,8 +54,10 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
                 console.log('===================================');
 
                 let [connector, env_address, criteria_path] = await selectConnectorFromInventory(connectorType, connectorInfo, argv);
-
-                await main(env_address, criteria_path, connector);
+                
+                if (connector && env_address && criteria_path) {
+                    await main(env_address, criteria_path, connector);
+                }
             }
         }
     }
@@ -146,8 +148,8 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
 
     if(!connector) {
         console.error(chalk.red(` => No running environment could be found with the given parameters:`), connectorType, connectorInfo);
-        console.error(chalk.red(' => Skipping the rest of inventory. Check this environment and try again.'));
-        process.exit(1);
+        console.error(chalk.red(' => Skipping...'));
+        return [null, null, null];
     }
 
     try {
@@ -156,7 +158,8 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
         await connector.ready(context);
     } catch (error) {
         console.error(chalk.red(` => ${error}`));
-        process.exit(1);
+        console.error(chalk.red(' => Skipping...'));
+        return [null, null, null];
     }
 
     return [connector, env_address, criteria_path]

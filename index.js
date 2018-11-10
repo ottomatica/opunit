@@ -11,7 +11,8 @@ const Reporter = require('./lib/inspect/report');
 const BakerConnector = require('./lib/harness/baker');
 const SSHConnector = require('./lib/harness/ssh');
 const DockerConnector = require('./lib/harness/docker');
-const VagrantConnector = require( './lib/harness/vagrant' );
+const VagrantConnector = require('./lib/harness/vagrant');
+const LocalConnector = require('./lib/harness/local');
 
 // Register run command
 yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
@@ -166,7 +167,11 @@ async function selectConnector(argv) {
     const cwd = process.cwd();
     let connector = null;
 
-    if (!argv.env_address && await fs.exists(path.join(cwd, 'Baker.yml'))) {
+    if (argv.env_address == 'local' || argv.env_address == 'localhost'){
+        connector = new LocalConnector();
+    }
+
+    else if (!argv.env_address && await fs.exists(path.join(cwd, 'Baker.yml'))) {
         connector = new BakerConnector();
     }
 

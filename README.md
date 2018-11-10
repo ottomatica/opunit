@@ -64,10 +64,9 @@ Opunit has many checks available for common verification tasks. See the document
 `contains` supports checking contents of the file. This can be useful when there is a template file and you want to check and make sure it is updated with the correct values in the file.
 
 ```yaml
-- check:
-    - contains: 
-         file: /home/jenkins/settings/login.properties
-         string: 'username: root'
+- contains: 
+     file: /home/jenkins/settings/login.properties
+     string: 'username: root'
 ```
 
 `status` = `true` | `false`

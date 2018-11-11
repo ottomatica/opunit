@@ -116,7 +116,7 @@ async function verify(env_address, criteria_path, connector)
 }
 
 async function selectConnectorFromInventory(connectorType, connectorInfo, argv) {
-    let env_address = connectorInfo.target || connectorInfo.instance;
+    let env_address = connectorInfo.target || connectorInfo.instance || connectorInfo.name; // TODO: is this always needed?
     let criteria_path = connectorInfo.criteria_path || argv.criteria_path;
 
     if (!criteria_path) {
@@ -134,7 +134,7 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
         connector = new BakerConnector();
     } 
     
-    else if (connectorType == 'vagrant' && await vagrantVMExists(connectorInfo.name)) {
+    else if (connectorType == 'vagrant' && (await (new VagrantConnector(false, connectorInfo.name)).getStatus( connectorInfo.name )).status === 'running' ) {
         connector = new VagrantConnector(false, connectorInfo.name);
     } 
     
@@ -186,7 +186,7 @@ async function selectConnector(argv) {
         connector = new SSHConnector(argv.env_address, argv.ssh_key);
     }
 
-    else if ( argv.env_address && await vagrantVMExists( argv.env_address ) ) {
+    else if ( argv.env_address && (await (new VagrantConnector(false, argv.env_address)).getStatus( argv.env_address )).status === 'running' ) {
         connector = new VagrantConnector( false, argv.env_address );
     }
 
@@ -195,7 +195,7 @@ async function selectConnector(argv) {
     }
 
     if(!connector) {
-        console.error(chalk.red(` => No environment could be found with the given name`));
+        console.error(chalk.red(` => No running environment could be found with the given name`));
         process.exit(1);
     }
 
@@ -208,30 +208,4 @@ async function selectConnector(argv) {
     }
 
     return connector;
-}
-
-async function vagrantVMExists( env_address ) {
-    return new Promise( function ( resolve, reject ) {
-        child_process.exec( `vagrant global-status`, ( error, stdout, stderr ) => {
-            if ( error || stderr ) {
-                console.error( `=> ${error}, ${stderr}` );
-                reject( error );
-            } else {
-                const data_by_line = stdout.split( '\n' );
-                let does_exist = false;
-
-                for ( data of data_by_line ) {
-                    data = data.trim().split( ' ' ).filter( function ( item ) {
-                        return item != '';
-                    } );
-
-                    if ( data[ 1 ] === env_address ) {
-                        does_exist = true;
-                        break;
-                    }
-                }
-                resolve( does_exist );
-            }
-        } );
-    } );
 }

@@ -235,6 +235,23 @@ $ opunit verify -i {path to inventory.yml}
 ```
 
 ---
+### What about inspec?
+
+Inspec is a great tool! However, it requires much more verbose and manual specifications of tests.
+For example, in inspec, a test is for checking the timezone requires writing something like this:
+
+```ruby
+# timezone should be est  
+describe command('date +%Z') do    
+  its(:stdout) { should match(/(EST)/) } 
+end
+```
+
+In opunit, this is simply expressed as:
+
+```yaml
+- timezone: EST
+```
 
 ### Installing from Source
 

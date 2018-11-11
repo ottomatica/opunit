@@ -11,7 +11,8 @@ const Reporter = require('./lib/inspect/report');
 const BakerConnector = require('./lib/harness/baker');
 const SSHConnector = require('./lib/harness/ssh');
 const DockerConnector = require('./lib/harness/docker');
-const VagrantConnector = require( './lib/harness/vagrant' );
+const VagrantConnector = require('./lib/harness/vagrant');
+const LocalConnector = require('./lib/harness/local');
 
 // Register run command
 yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
@@ -43,25 +44,20 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
     if(argv.inventory) {
         let inventory = yaml.safeLoad(await fs.readFile(argv.inventory, 'utf8'));
         for(let group of inventory) {
-            let connector_type = Object.keys(group)[0];
+            
+            let connectorType = Object.keys(group)[0];
 
-            for(let i = 0; i < group[connector_type].length; i++) {
+            for(let connectorInfo of group[connectorType]) {
+                console.log('\n===================================');
+                console.log(`Connector: ${connectorType}`);
+                console.log(`Info: ${JSON.stringify(connectorInfo)}`);
+                console.log('===================================');
 
-                console.log('\n', group[connector_type][i], '\n');
-                let env_address = group[connector_type][i].target || group[connector_type][i].instance;
-                let criteria_path = group[connector_type][i].criteria_path || argv.criteria_path;
+                let [connector, env_address, criteria_path] = await selectConnectorFromInventory(connectorType, connectorInfo, argv);
                 
-                if (!criteria_path) {
-                    criteria_path =  path.join(process.cwd(), 'test', 'opunit.yml');
-                    if( !fs.existsSync(criteria_path) )
-                    {
-                        console.error(chalk.red(`${connector_type}: criteria file (opunit.yml) was not provided, nor was default path found in test/opunit.yml`));
-                        console.error(chalk.red(`Skipping...`));
-                        continue;
-                    }
+                if (connector && env_address && criteria_path) {
+                    await main(env_address, criteria_path, connector);
                 }
-    
-                await main(env_address, criteria_path, connector_type, {ssh_key: group.ssh ? (group.ssh[i].private_key || group.ssh[i].ssh_key) : undefined, container: group.docker ? group.docker[i].name || group.docker[i].id : undefined});
             }
         }
     }
@@ -89,9 +85,9 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
 // Turn on help and access argv
 yargs.help().argv;
 
-async function main(env_address, criteria_path, connector, args)
+async function main(env_address, criteria_path, connector)
 {
-    await verify(env_address, criteria_path, connector, args);
+    await verify(env_address, criteria_path, connector);
 }
 
 async function verify(env_address, criteria_path, connector)
@@ -119,12 +115,66 @@ async function verify(env_address, criteria_path, connector)
     reporter.summary();
 }
 
+async function selectConnectorFromInventory(connectorType, connectorInfo, argv) {
+    let env_address = connectorInfo.target || connectorInfo.instance || connectorInfo.name; // TODO: is this always needed?
+    let criteria_path = connectorInfo.criteria_path || argv.criteria_path;
+
+    if (!criteria_path) {
+        criteria_path = path.join(process.cwd(), 'test', 'opunit.yml');
+        if (!fs.existsSync(criteria_path)) {
+            console.error(chalk.red(`${connectorType}: criteria file (opunit.yml) was not provided, nor was default path found in test/opunit.yml`));
+            console.error(chalk.red(`Skipping...`));
+            process.exit(1);
+        }
+    }
+
+    let connector = null;
+
+    if (connectorType == 'baker' && await fs.exists(path.join(connectorInfo.target, 'Baker.yml'))) {
+        connector = new BakerConnector();
+    } 
+    
+    else if (connectorType == 'vagrant' && (await (new VagrantConnector(false, connectorInfo.name)).getStatus( connectorInfo.name )).status === 'running' ) {
+        connector = new VagrantConnector(false, connectorInfo.name);
+    } 
+    
+    else if (connectorType == 'docker' && await (new DockerConnector(connectorInfo.name)).containerExists()) {
+        connector = new DockerConnector(connectorInfo.name);
+    } 
+    
+    else if (connectorType == 'ssh' && connectorInfo.target.match(/[@:]+/)) {
+        connector = new SSHConnector(connectorInfo.target, connectorInfo.private_key);
+    }
+
+    if(!connector) {
+        console.error(chalk.red(` => No running environment could be found with the given parameters:`), connectorType, connectorInfo);
+        console.error(chalk.red(' => Skipping...'));
+        return [null, null, null];
+    }
+
+    try {
+        // TODO: refactoring
+        let context = { bakerPath: connectorInfo.target };
+        await connector.ready(context);
+    } catch (error) {
+        console.error(chalk.red(` => ${error}`));
+        console.error(chalk.red(' => Skipping...'));
+        return [null, null, null];
+    }
+
+    return [connector, env_address, criteria_path]
+}
+
 async function selectConnector(argv) {
 
     const cwd = process.cwd();
     let connector = null;
 
-    if (!argv.env_address && await fs.exists(path.join(cwd, 'Baker.yml'))) {
+    if (argv.env_address == 'local' || argv.env_address == 'localhost'){
+        connector = new LocalConnector();
+    }
+
+    else if (!argv.env_address && await fs.exists(path.join(cwd, 'Baker.yml'))) {
         connector = new BakerConnector();
     }
 
@@ -136,7 +186,7 @@ async function selectConnector(argv) {
         connector = new SSHConnector(argv.env_address, argv.ssh_key);
     }
 
-    else if ( argv.env_address && await vagrantVMExists( argv.env_address ) ) {
+    else if ( argv.env_address && (await (new VagrantConnector(false, argv.env_address)).getStatus( argv.env_address )).status === 'running' ) {
         connector = new VagrantConnector( false, argv.env_address );
     }
 
@@ -145,7 +195,7 @@ async function selectConnector(argv) {
     }
 
     if(!connector) {
-        console.error(chalk.red(` => No environment could be found with the given name`));
+        console.error(chalk.red(` => No running environment could be found with the given name`));
         process.exit(1);
     }
 
@@ -158,30 +208,4 @@ async function selectConnector(argv) {
     }
 
     return connector;
-}
-
-async function vagrantVMExists( env_address ) {
-    return new Promise( function ( resolve, reject ) {
-        child_process.exec( `vagrant global-status`, ( error, stdout, stderr ) => {
-            if ( error || stderr ) {
-                console.error( `=> ${error}, ${stderr}` );
-                reject( error );
-            } else {
-                const data_by_line = stdout.split( '\n' );
-                let does_exist = false;
-
-                for ( data of data_by_line ) {
-                    data = data.trim().split( ' ' ).filter( function ( item ) {
-                        return item != '';
-                    } );
-
-                    if ( data[ 1 ] === env_address ) {
-                        does_exist = true;
-                        break;
-                    }
-                }
-                resolve( does_exist );
-            }
-        } );
-    } );
 }

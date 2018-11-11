@@ -25,10 +25,10 @@ Opunit uses a configuration file (opunit.yml) in the `/test` directory of you pr
           setup:
             cmd: node app.js
             wait_for: Started Application
-      - version:          
+      - version:
          cmd: mysql --version
          range: ^8.x.x
-      - version:          
+      - version:
          cmd: node --version
          range: ^10.x.x
 ```
@@ -64,7 +64,7 @@ Opunit has many checks available for common verification tasks. See the document
 `contains` supports checking contents of the file. This can be useful when there is a template file and you want to check and make sure it is updated with the correct values in the file.
 
 ```yaml
-- contains: 
+- contains:
      file: /home/jenkins/settings/login.properties
      string: 'username: root'
 ```
@@ -81,7 +81,7 @@ contains check
 
 `service` supports checking the status of a system service (e.g. systemd).
 
-```
+``` yaml
 - service:
    name: mysql
    status: active
@@ -89,6 +89,7 @@ contains check
    name: shouldntexist
    status: none
 ```
+
 `status` = `active` | `inactive` | `none`
 
 Expected output:
@@ -103,8 +104,8 @@ service check
 
 `reachable` determines whether a resource, such as a url, domain, or path is accessible from the instance. This check is good for determining whether dns or firewalls are configured appropriately.
 
-```yaml
-reachable:
+``` yaml
+- reachable:
   - google.com
   - nope.com/404.html
   - reallyImportantFile.txt
@@ -112,7 +113,50 @@ reachable:
 
 ---
 
+`capability` supports checking the environment satisfies that minimum size of memory, CPU cores, and free disk space.
 
+``` yaml
+- capability:
+    memory: 2000
+    cores: 1
+    disks:
+      - location: /
+        size: 10
+```
+
+---
+
+`availability` supports running the specified command and waiting for an output, to then send a http request and check if it receives the expected status code.
+
+``` yaml
+- availability:
+    port: 3000
+    status: 200
+    url: /
+    setup:
+        cmd: baker run serve
+        wait_for: Started Application
+```
+
+---
+
+`version` supports running the provided `"--version"` command for an application on the environment, and checking if the installed version is in the range of specified semver range.
+
+``` yaml
+- version:
+    cmd: mysql --version
+    range: ^5.x.x
+```
+
+---
+
+`timezone` supports checking the timezone settings on the environment.
+
+``` yaml
+- timezone: EST
+```
+
+---
 
 ## Connectors
 Opunit has different connectors to be able to run checks on different kinds of environments. See below for description of each one and how the can be used.

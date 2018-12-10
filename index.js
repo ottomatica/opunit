@@ -6,6 +6,8 @@ const yargs    = require('yargs');
 const yaml     = require('js-yaml');
 const chalk    = require('chalk');
 
+const Profile = require('./lib/profile');
+
 const Loader = require('./lib/inspect/checks/loader');
 const Reporter = require('./lib/inspect/report');
 const BakerConnector = require('./lib/harness/baker');
@@ -15,6 +17,22 @@ const VagrantConnector = require('./lib/harness/vagrant');
 const LocalConnector = require('./lib/harness/local');
 
 // Register run command
+yargs.command('profile <address>', 'Run check against specified profile ', (yargs) => {
+}, async (argv) =>
+{
+    let profile = new Profile();
+    let repo = argv.address.split(':')[0]
+    let yml = argv.address.split(':')[1]
+    
+    //let file = await profile.get('CSC-DevOps/profile', '326.yml')
+    let file = await profile.get(repo, yml);
+
+    await verify("local", file, new LocalConnector());
+
+});
+
+
+
 yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
     yargs.positional('criteria_path', {
         describe: 'path to the opunit.yml file, default is cwd/test/opunit.yml',
@@ -92,13 +110,13 @@ async function main(env_address, criteria_path, connector)
 
 async function verify(env_address, criteria_path, connector)
 {
-
     let reporter  = new Reporter();
 
     let context = { bakerPath: env_address };
 
     let loader = new Loader();
     let checks = await loader.loadChecks(criteria_path);
+
 
     console.log();
     console.log(chalk.underline('Checks'))

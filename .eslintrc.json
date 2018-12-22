@@ -42,6 +42,13 @@
         ],
         "no-console": "off",
         "no-underscore-dangle": "off",
-        "prefer-promise-reject-errors": "off"
+        "prefer-promise-reject-errors": "off",
+        "no-await-in-loop": "off",
+        "no-restricted-syntax": [
+            "error",
+            "ForInStatement",
+            "LabeledStatement",
+            "WithStatement"
+        ]
     }
 }

@@ -20,18 +20,22 @@ async function verify(env_address, criteria_path, connector) {
     let context = { bakerPath: env_address };
 
     let loader = new Loader();
-    let checks = await loader.loadChecks(criteria_path);
+    let groups = await loader.loadChecks(criteria_path);
 
     console.log();
     console.log(chalk.underline('Checks'));
-    console.log();
 
-    for (let check of checks) {
-        let instance = new check.module(connector, reporter);
+    for (let group of groups) {
 
-        console.log(chalk`\t{bold ${check.name} check}`);
-        let results = await instance.check(context, check.args);
-        instance.report(results);
+        console.log(chalk`\n\t{italic ${group.description}\n}`);
+
+        for( let check of group.checks ) {
+            let instance = new check.module(connector, reporter);
+
+            console.log(chalk`\t{bold ${check.name} check}`);
+            let results = await instance.check(context, check.args);
+            instance.report(results);
+        }
     }
     reporter.summary();
 }

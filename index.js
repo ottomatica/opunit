@@ -34,6 +34,10 @@ async function verify(env_address, criteria_path, connector) {
 
             console.log(chalk`\t{bold ${check.name} check}`);
             let results = await instance.check(context, check.args);
+            if( check.args && check.args.comment )
+            {
+                console.log(chalk`\t\t{italic.gray ${check.args.comment}}`);
+            }
             instance.report(results);
         }
     }

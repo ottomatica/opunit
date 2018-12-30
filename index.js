@@ -27,12 +27,12 @@ async function verify(env_address, criteria_path, connector) {
 
     for (let group of groups) {
 
-        console.log(chalk`\n\t{italic ${group.description}\n}`);
+        console.log(chalk`\n\t{bold ${group.description}\n}`);
 
         for( let check of group.checks ) {
             let instance = new check.module(connector, reporter);
 
-            console.log(chalk`\t{bold ${check.name} check}`);
+            console.log(chalk`\t{white ${check.name} check}`);
             let results = await instance.check(context, check.args);
             if( check.args && check.args.comment )
             {

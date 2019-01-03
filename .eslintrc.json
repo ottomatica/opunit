@@ -1,0 +1,54 @@
+{
+    "env": {
+        "es6": true,
+        "node": true
+    },
+    "extends": ["eslint:recommended", "eslint-config-airbnb-base"],
+    "parserOptions": {
+        "ecmaVersion": 2017,
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "no-multi-spaces": "off",
+        "camelcase": "off",
+        "import/newline-after-import": "off",
+        "radix": [
+            "error",
+            "as-needed"
+        ],
+        "no-plusplus": [
+            "warn", {"allowForLoopAfterthoughts": true}
+        ],
+        "prefer-const": "off",
+        "class-methods-use-this": "off",
+        "no-unused-vars": [
+            "error", { "argsIgnorePattern": "^_" }
+        ],
+        "no-console": "off",
+        "no-underscore-dangle": "off",
+        "prefer-promise-reject-errors": "off",
+        "no-await-in-loop": "off",
+        "no-restricted-syntax": [
+            "error",
+            "ForInStatement",
+            "LabeledStatement",
+            "WithStatement"
+        ]
+    }
+}

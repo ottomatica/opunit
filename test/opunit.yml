@@ -1,0 +1,16 @@
+- group:
+   description: "Editor support"
+   checks:
+     - version:
+         comment: vim is useful for quick edits in the terminal
+         cmd: vim --version
+         range: ^8.0.x
+     - version:
+         cmd: mysql --version
+         range: ^5.7.x   
+     - version:
+         cmd: node --version
+         range: ^10.15.x    
+     - version:
+         cmd: java -version
+         range: ^1.7.x    

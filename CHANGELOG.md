@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/ottomatica/opunit/compare/v0.3.0...v0.3.1) (2019-01-30)
+
+
+### Bug Fixes
+
+* **checks:**  Fix reachable check for Baker and ssh connector ([7d05ecc](https://github.com/ottomatica/opunit/commit/7d05ecc))
+* correct output when no match found. ([984329b](https://github.com/ottomatica/opunit/commit/984329b))
+* improve version matching [#43](https://github.com/ottomatica/opunit/issues/43) ([10e9a8f](https://github.com/ottomatica/opunit/commit/10e9a8f))
+
+
+
 <a name="0.3.0"></a>
 # 0.3.0 (2019-01-03)
 

@@ -1,6 +1,6 @@
 {
   "name": "opunit",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "opunit",
   "main": "index.js",
   "bin": "index.js",
@@ -30,10 +30,10 @@
     "fs-extra": "^7.0.0",
     "js-yaml": "^3.12.0",
     "request": "^2.88.0",
-    "semver": "^5.5.1",
+    "semver": "^6.0.0",
     "ssh2": "^0.8.2",
     "systeminformation": "^4.0.6",
-    "yargs": "^12.0.2"
+    "yargs": "^13.1.0"
   },
   "devDependencies": {
     "commitizen": "^3.0.4",
@@ -41,7 +41,7 @@
     "eslint": "^5.10.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "standard-version": "^4.4.0"
+    "standard-version": "^6.0.1"
   },
   "config": {
     "commitizen": {

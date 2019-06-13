@@ -1,6 +1,20 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [0.4.1](https://github.com/ottomatica/opunit/compare/v0.4.0...v0.4.1) (2019-06-13)
+
+
+### Build System
+
+* **deps:** bump check-disk-space from 1.5.0 to 2.0.0 ([#108](https://github.com/ottomatica/opunit/issues/108)) ([a263d0f](https://github.com/ottomatica/opunit/commit/a263d0f))
+* **deps:** bump fs-extra to 8.0.1 ([#100](https://github.com/ottomatica/opunit/issues/100)) ([cbe729e](https://github.com/ottomatica/opunit/commit/cbe729e))
+* **deps:** bump semver to 6.1.1 ([#105](https://github.com/ottomatica/opunit/issues/105)) ([39431a1](https://github.com/ottomatica/opunit/commit/39431a1))
+* **deps:** bump systeminformation to 4.9.2 ([#111](https://github.com/ottomatica/opunit/issues/111)) ([825976c](https://github.com/ottomatica/opunit/commit/825976c))
+* **deps:** bump yargs from 13.2.2 to 13.2.4 ([#99](https://github.com/ottomatica/opunit/issues/99)) ([43ca02c](https://github.com/ottomatica/opunit/commit/43ca02c))
+* **deps-dev:** bump eslint-plugin-import from 2.17.2 to 2.17.3 ([#103](https://github.com/ottomatica/opunit/issues/103)) ([d6d5730](https://github.com/ottomatica/opunit/commit/d6d5730))
+
+
 
 # [0.4.0](https://github.com/ottomatica/opunit/compare/v0.3.2...v0.4.0) (2019-05-06)
 

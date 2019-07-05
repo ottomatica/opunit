@@ -62,7 +62,7 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
 
     let connector = null;
 
-    if (connectorType === 'baker' && await fs.exists(path.join(connectorInfo.target, 'Baker.yml'))) {
+    if (connectorType === 'baker' && await fs.exists(path.join(connectorInfo.target, 'baker.yml'))) {
         connector = new BakerConnector();
     } else if (connectorType === 'vagrant' && (await (new VagrantConnector(false, connectorInfo.name)).getStatus(connectorInfo.name)).status === 'running') {
         connector = new VagrantConnector(false, connectorInfo.name);
@@ -97,7 +97,7 @@ async function selectConnector(argv) {
 
     if (argv.env_address === 'local' || argv.env_address === 'localhost') {
         connector = new LocalConnector();
-    } else if (!argv.env_address && await fs.exists(path.join(cwd, 'Baker.yml'))) {
+    } else if (!argv.env_address && await fs.exists(path.join(cwd, 'baker.yml'))) {
         connector = new BakerConnector();
     } else if (!argv.env_address && await fs.exists(path.join(cwd, 'Vagrantfile'))) {
         connector = new VagrantConnector(true);

@@ -101,6 +101,8 @@ async function selectConnector(argv) {
         connector = new BakerConnector();
     } else if (!argv.env_address && await fs.exists(path.join(cwd, 'Vagrantfile'))) {
         connector = new VagrantConnector(true);
+    } else if (argv.env_address && await fs.exists(path.resolve(argv.env_address))) {
+        connector = new BakerConnector();
     } else if (argv.env_address && argv.env_address.match(/[@:]+/)) {
         connector = new SSHConnector(argv.env_address, argv.ssh_key);
     } else if (argv.env_address && (await (new VagrantConnector(false, argv.env_address)).getStatus(argv.env_address)).status === 'running') {

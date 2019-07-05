@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.2](https://github.com/ottomatica/opunit/compare/v0.4.1...v0.4.2) (2019-07-05)
+
+
+### Bug Fixes
+
+* "./Baker.yml" -> "./baker.yml" ([cb955e9](https://github.com/ottomatica/opunit/commit/cb955e9))
+* fixes bakerConn when env_address is provided ([f8159ac](https://github.com/ottomatica/opunit/commit/f8159ac)), closes [#129](https://github.com/ottomatica/opunit/issues/129)
+
+
+### Build System
+
+* **deps:** bump check-disk-space from 2.0.0 to 2.1.0 ([#119](https://github.com/ottomatica/opunit/issues/119)) ([495f7f9](https://github.com/ottomatica/opunit/commit/495f7f9))
+* **deps:** bump fs-extra from 8.0.1 to 8.1.0 ([#120](https://github.com/ottomatica/opunit/issues/120)) ([c02820c](https://github.com/ottomatica/opunit/commit/c02820c))
+* **deps:** bump semver to 6.2.0 ([#125](https://github.com/ottomatica/opunit/issues/125)) ([7b5a7a2](https://github.com/ottomatica/opunit/commit/7b5a7a2))
+* **deps:** bump systeminformation to 4.10.0 ([#112](https://github.com/ottomatica/opunit/issues/112)) ([6c71e79](https://github.com/ottomatica/opunit/commit/6c71e79))
+* **deps-dev:** bump eslint-config-airbnb-base from 13.1.0 to 1… ([#124](https://github.com/ottomatica/opunit/issues/124)) ([42ae4c5](https://github.com/ottomatica/opunit/commit/42ae4c5))
+* **deps-dev:** bump eslint-plugin-import from 2.17.3 to 2.18.0 ([#118](https://github.com/ottomatica/opunit/issues/118)) ([e310fbf](https://github.com/ottomatica/opunit/commit/e310fbf))
+
+
+
 ### [0.4.1](https://github.com/ottomatica/opunit/compare/v0.4.0...v0.4.1) (2019-06-13)
 
 

@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.3](https://github.com/ottomatica/opunit/compare/v0.4.2...v0.4.3) (2019-08-18)
+
+
+### Build System
+
+* **deps:** [security] bump lodash from 4.17.11 to 4.17.14 ([#138](https://github.com/ottomatica/opunit/issues/138)) ([db2f982](https://github.com/ottomatica/opunit/commit/db2f982))
+* **deps:** [security] bump lodash.template from 4.4.0 to 4.5.0 ([#132](https://github.com/ottomatica/opunit/issues/132)) ([25491c3](https://github.com/ottomatica/opunit/commit/25491c3))
+* **deps:** bump semver from 6.2.0 to 6.3.0 ([#143](https://github.com/ottomatica/opunit/issues/143)) ([b037763](https://github.com/ottomatica/opunit/commit/b037763))
+* **deps:** bump ssh2 from 0.8.4 to 0.8.5 ([#133](https://github.com/ottomatica/opunit/issues/133)) ([c0e694d](https://github.com/ottomatica/opunit/commit/c0e694d))
+* **deps:** bump systeminformation to 4.14.4 ([#140](https://github.com/ottomatica/opunit/issues/140)) ([8b83bfb](https://github.com/ottomatica/opunit/commit/8b83bfb))
+* **deps:** bump yargs from 13.2.4 to 13.3.0 ([#134](https://github.com/ottomatica/opunit/issues/134)) ([dc09095](https://github.com/ottomatica/opunit/commit/dc09095))
+* **deps-dev:** bump commitizen to 4.0.3 ([#139](https://github.com/ottomatica/opunit/issues/139)) ([ac4c8da](https://github.com/ottomatica/opunit/commit/ac4c8da))
+* **deps-dev:** bump cz-conventional-changelog from 2.1.0 to 3.… ([#141](https://github.com/ottomatica/opunit/issues/141)) ([a2560b4](https://github.com/ottomatica/opunit/commit/a2560b4))
+* **deps-dev:** bump eslint from 5.16.0 to 6.1.0 ([#146](https://github.com/ottomatica/opunit/issues/146)) ([2a90654](https://github.com/ottomatica/opunit/commit/2a90654))
+* **deps-dev:** bump eslint-config-airbnb-base from 13.2.0 to 1… ([#145](https://github.com/ottomatica/opunit/issues/145)) ([3ab111b](https://github.com/ottomatica/opunit/commit/3ab111b))
+* **deps-dev:** bump eslint-plugin-import to 2.18.2 ([#142](https://github.com/ottomatica/opunit/issues/142)) ([f36ff34](https://github.com/ottomatica/opunit/commit/f36ff34))
+* **deps-dev:** bump standard-version from 6.0.1 to 7.0.0 ([#144](https://github.com/ottomatica/opunit/issues/144)) ([f607152](https://github.com/ottomatica/opunit/commit/f607152))
+
+
+
 ### [0.4.2](https://github.com/ottomatica/opunit/compare/v0.4.1...v0.4.2) (2019-07-05)
 
 

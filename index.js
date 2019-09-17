@@ -112,7 +112,6 @@ async function selectConnector(argv) {
         name = path.join(cwd, 'baker.yml');
     } else if (!argv.env_address && await fs.exists(path.join(cwd, 'Vagrantfile'))) {
         connectorTypeLocal = 'vagrant';
-        console.debug("hi");
         name = path.join(cwd, 'Vagrantfile');
         opts['inCWD'] = true;
     } else if (argv.env_address && await fs.exists(path.resolve(argv.env_address))) {

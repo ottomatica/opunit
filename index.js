@@ -8,11 +8,6 @@ const chalk    = require('chalk');
 const Profile = require('./lib/profile');
 const Loader = require('./lib/inspect/checks/loader');
 const Reporter = require('./lib/inspect/report');
-// const BakerConnector = require('./lib/harness/baker');
-const SSHConnector = require('./lib/harness/ssh');
-// const DockerConnector = require('./lib/harness/docker');
-// const VagrantConnector = require('./lib/harness/vagrant');
-// const LocalConnector = require('./lib/harness/local');
 const Connector = require('infra.connectors');
 
 async function verify(env_address, criteria_path, connector) {

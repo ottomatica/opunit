@@ -126,7 +126,7 @@ async function selectConnector(argv) {
         connectorTypeLocal = 'vagrant';
         opts['inCWD'] = false;
         name = argv.env_address;
-    } else if (argv.env_address && await (await (Connector.getConnector('docker', argv.env_address, opts)).containerExists()).containerExists()) {
+    } else if (argv.env_address && await (await (Connector.getConnector('docker', argv.env_address, opts)).containerExists()) {
         name = (argv.env_address || argv.container);
     }
 

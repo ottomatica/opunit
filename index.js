@@ -122,7 +122,7 @@ async function selectConnector(argv) {
         connectorTypeLocal = 'ssh';
         name = argv.env_address;
         opts['privateKey'] = argv.ssh_key;
-    } else if (argv.env_address && (await (Connector.getConnector('vagrant', argv.env_address, optsCheck)).getStatus(connectorInfo.name)).status === 'running') {
+    } else if (argv.env_address && (await (Connector.getConnector('vagrant', argv.env_address, optsCheck)).getStatus(argv.env_address)).status === 'running') {
         connectorTypeLocal = 'vagrant';
         opts['inCWD'] = false;
         name = argv.env_address;

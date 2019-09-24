@@ -104,8 +104,7 @@ async function selectConnector(argv) {
     let opts = {};
     let optsCheck = {inCWD: false}; 
     let connectorTypeLocal;
-    console.log(await ((Connector.getConnector('vagrant', argv.env_address, optsCheck)).getStatus(argv.env_address)));
-
+    
     if (argv.env_address === 'local' || argv.env_address === 'localhost') {
         connectorTypeLocal = 'local';
     } else if (!argv.env_address && await fs.exists(path.join(cwd, 'baker.yml'))) {

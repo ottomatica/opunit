@@ -158,7 +158,7 @@ yargs.command('profile <address>', 'Run check against specified profile ', (yarg
     // let file = await profile.get('CSC-DevOps/profile', '326.yml')
     let file = await profile.get(repo, yml);
 
-    await verify('local', file, new LocalConnector());
+    await verify('local', file, Connector.getConnector(connectorTypeLocal, '', {}));
 });
 
 yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {

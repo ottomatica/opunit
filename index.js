@@ -104,6 +104,7 @@ async function selectConnector(argv) {
     let opts = {};
     let optsCheck = {inCWD: false}; 
     let connectorTypeLocal;
+    console.log(await ((Connector.getConnector('vagrant', argv.env_address, optsCheck)).getStatus(argv.env_address)));
 
     if (argv.env_address === 'local' || argv.env_address === 'localhost') {
         connectorTypeLocal = 'local';
@@ -158,7 +159,7 @@ yargs.command('profile <address>', 'Run check against specified profile ', (yarg
     // let file = await profile.get('CSC-DevOps/profile', '326.yml')
     let file = await profile.get(repo, yml);
 
-    await verify('local', file, Connector.getConnector(connectorTypeLocal, '', {}));
+    await verify('local', file, Connector.getConnector('local', '', {}));
 });
 
 yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {

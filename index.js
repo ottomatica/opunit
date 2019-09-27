@@ -113,6 +113,7 @@ async function selectConnector(argv) {
     
     if (argv.env_address === 'local' || argv.env_address === 'localhost') {
         connectorTypeLocal = 'local';
+        name = argv.env_address;
     } else if (!argv.env_address && await fs.exists(path.join(cwd, 'baker.yml'))) {
         connectorTypeLocal = 'baker';
         name = cwd;

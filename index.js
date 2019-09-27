@@ -59,22 +59,28 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
     let connector = null;
     let opts = {};
     let optsCheck = {inCWD: false}; 
-    let name;
+    let name = null;
 
-    if (connectorType === 'baker') {
+    if (connectorType === 'baker' && await (fs.exists(path.join(connectorInfo.target, 'baker.yml')))) {
         name = path.join(connectorInfo.target, 'baker.yml');
     } else if (connectorType === 'vagrant') {
-        name = connectorInfo.name;
-        opts['inCWD'] = false;
+        let checkVagrantRunning = await Connector.getConnector('vagrant', connectorInfo.name, {inCWD: false});
+        let getStatus  = await checkVagrantRunning.getStatus();
+        if(await getStatus.status === 'running'){
+            name = connectorInfo.name;
+            opts['inCWD'] = false;
+        }
     } else if (connectorType === 'docker') {
-        name = connectorInfo.name;
-    } else if (connectorType === 'ssh') {
+        let checkDockerRunning = await Connector.getConnector('docker', connectorInfo.name, opts);
+        let getStatus  = await checkDockerRunning.containerExists();
+        if(getStatus){
+            name = connectorInfo.name;
+        }
+    } else if (connectorType === 'ssh' && connectorInfo.target.match(/[@:]+/)) {
         name = connectorInfo.target; 
-        opts['private_key'] = connectorInfo.private_key;
+        opts['privateKey'] = connectorInfo.private_key;
     }
-
-    if((await fs.exists(path.join(connectorInfo.target, 'baker.yml'))) || ((await (Connector.getConnector('vagrant', name, optsCheck)).getStatus(connectorInfo.name)).status === 'running')
-        || (await (Connector.getConnector('docker', name, opts)).containerExists()) || (connectorInfo.target.match(/[@:]+/))){
+    if(name !== null){
             connector = Connector.getConnector(connectorType, name, opts);
         }
 
@@ -100,7 +106,7 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
 async function selectConnector(argv) {
     const cwd = process.cwd();
     let connector = null;
-    let name;
+    let name = null;
     let opts = {};
     let optsCheck = {inCWD: false}; 
     let connectorTypeLocal;
@@ -109,7 +115,7 @@ async function selectConnector(argv) {
         connectorTypeLocal = 'local';
     } else if (!argv.env_address && await fs.exists(path.join(cwd, 'baker.yml'))) {
         connectorTypeLocal = 'baker';
-        name = path.join(cwd, 'baker.yml');
+        name = cwd;
     } else if (!argv.env_address && await fs.exists(path.join(cwd, 'Vagrantfile'))) {
         connectorTypeLocal = 'vagrant';
         name = path.join(cwd, 'Vagrantfile');
@@ -122,15 +128,26 @@ async function selectConnector(argv) {
         connectorTypeLocal = 'ssh';
         name = argv.env_address;
         opts['privateKey'] = argv.ssh_key;
-    } else if (argv.env_address && (await (Connector.getConnector('vagrant', argv.env_address, optsCheck)).getStatus(argv.env_address)).status === 'running') {
-        connectorTypeLocal = 'vagrant';
-        opts['inCWD'] = false;
-        name = argv.env_address;
-    } else if (argv.env_address && await (await (Connector.getConnector('docker', argv.env_address, opts)).containerExists())) {
-        name = (argv.env_address || argv.container);
+    } else if (argv.env_address) {
+        let checkVagrantRunning = await Connector.getConnector('vagrant', argv.env_address, {inCWD: false});
+        let getStatus  = await checkVagrantRunning.getStatus();
+        if(await getStatus.status === 'running'){
+            connectorTypeLocal = 'vagrant';
+            opts['inCWD'] = false;
+            name = argv.env_address;
+        }
+        else{
+            let checkDockerRunning = await (Connector.getConnector('docker', argv.env_address, opts));
+            let containerExists = await checkDockerRunning.containerExists();
+            if(containerExists){
+                name = (argv.env_address || argv.container);
+                console.log('Docker :',name);
+            }
+        }
     }
-
-    connector = Connector.getConnector(connectorTypeLocal, name, opts);
+    if(name != null){
+        connector = Connector.getConnector(connectorTypeLocal, name, opts);
+    }
 
     if (!connector) {
         console.error(chalk.red(' => No running environment could be found with the given name'));

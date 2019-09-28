@@ -46,7 +46,7 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
     // TODO: is this always needed?
     let env_address = connectorInfo.target || connectorInfo.instance || connectorInfo.name;
     let criteria_path = connectorInfo.criteria_path || argv.criteria_path;
-
+    
     if (!criteria_path) {
         criteria_path = path.join(process.cwd(), 'test', 'opunit.yml');
         if (!fs.existsSync(criteria_path)) {
@@ -60,9 +60,8 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
     let opts = {};
     let optsCheck = {inCWD: false}; 
     let name = null;
-
-    if (connectorType === 'baker' && await (fs.exists(path.join(connectorInfo.target, 'baker.yml')))) {
-        name = path.join(connectorInfo.target, 'baker.yml');
+    if (connectorType === 'baker' && await fs.exists(path.join(connectorInfo.target, 'baker.yml'))) {
+        name = connectorInfo.target;
     } else if (connectorType === 'vagrant') {
         let checkVagrantRunning = await Connector.getConnector('vagrant', connectorInfo.name, {inCWD: false});
         let getStatus  = await checkVagrantRunning.getStatus();
@@ -92,8 +91,8 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
 
     try {
         // TODO: refactoring
-        let context = { bakerPath: connectorInfo.target };
-        await connector.ready(context);
+        //let context = { bakerPath: connectorInfo.target };
+        await connector.ready();
     } catch (error) {
         console.error(chalk.red(` => ${error}`));
         console.error(chalk.red(' => Skipping...'));
@@ -110,7 +109,6 @@ async function selectConnector(argv) {
     let opts = {};
     let optsCheck = {inCWD: false}; 
     let connectorTypeLocal;
-    
     if (argv.env_address === 'local' || argv.env_address === 'localhost') {
         connectorTypeLocal = 'local';
         name = argv.env_address;
@@ -125,7 +123,6 @@ async function selectConnector(argv) {
         connectorTypeLocal = 'baker';
         name = path.resolve(argv.env_address);
     } else if (argv.env_address && argv.env_address.match(/[@:]+/)) {
-        //connector = new SSHConnector(argv.env_address, argv.ssh_key);
         connectorTypeLocal = 'ssh';
         name = argv.env_address;
         opts['privateKey'] = argv.ssh_key;
@@ -141,8 +138,8 @@ async function selectConnector(argv) {
             let checkDockerRunning = await (Connector.getConnector('docker', argv.env_address, opts));
             let containerExists = await checkDockerRunning.containerExists();
             if(containerExists){
+                connectorTypeLocal = 'docker';
                 name = (argv.env_address || argv.container);
-                console.log('Docker :',name);
             }
         }
     }
@@ -156,8 +153,8 @@ async function selectConnector(argv) {
     }
 
     try {
-        let context = { bakerPath: argv.env_address || process.cwd() };
-        await connector.ready(context);
+        //let context = { bakerPath: argv.env_address || process.cwd() };
+        await connector.ready();
     } catch (error) {
         console.error(chalk.red(` => ${error}`));
         process.exit(1);

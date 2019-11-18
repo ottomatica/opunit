@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/ottomatica/opunit#readme",
   "dependencies": {
-    "chalk": "^2.4.1",
+    "chalk": "^3.0.0",
     "check-disk-space": "^2.0.0",
     "dockerode": "^3.0.2",
     "fs-extra": "^8.0.0",

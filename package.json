@@ -34,7 +34,7 @@
     "semver": "^6.0.0",
     "ssh2": "^0.8.2",
     "systeminformation": "^4.0.6",
-    "yargs": "^14.0.0"
+    "yargs": "^15.0.1"
   },
   "devDependencies": {
     "commitizen": "^4.0.1",

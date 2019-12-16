@@ -31,7 +31,7 @@
     "infra.connectors": "github:ottomatica/infra.connectors",
     "js-yaml": "^3.12.0",
     "request": "^2.88.0",
-    "semver": "^6.0.0",
+    "semver": "^7.0.0",
     "ssh2": "^0.8.2",
     "systeminformation": "^4.0.6",
     "yargs": "^15.0.1"

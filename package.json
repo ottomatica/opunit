@@ -33,7 +33,7 @@
     "request": "^2.88.0",
     "semver": "^7.1.1",
     "ssh2": "^0.8.2",
-    "systeminformation": "^4.0.6",
+    "systeminformation": "^4.21.1",
     "yargs": "^15.0.1"
   },
   "devDependencies": {
@@ -41,7 +41,7 @@
     "cz-conventional-changelog": "^3.0.2",
     "eslint": "^6.1.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.20.1",
     "standard-version": "^7.0.0"
   },
   "config": {

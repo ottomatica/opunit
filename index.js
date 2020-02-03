@@ -8,11 +8,7 @@ const chalk    = require('chalk');
 const Profile = require('./lib/profile');
 const Loader = require('./lib/inspect/checks/loader');
 const Reporter = require('./lib/inspect/report');
-const BakerConnector = require('./lib/harness/baker');
-const SSHConnector = require('./lib/harness/ssh');
-const DockerConnector = require('./lib/harness/docker');
-const VagrantConnector = require('./lib/harness/vagrant');
-const LocalConnector = require('./lib/harness/local');
+const Connector = require('infra.connectors');
 
 async function verify(env_address, criteria_path, connector) {
     let reporter  = new Reporter();
@@ -50,7 +46,7 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
     // TODO: is this always needed?
     let env_address = connectorInfo.target || connectorInfo.instance || connectorInfo.name;
     let criteria_path = connectorInfo.criteria_path || argv.criteria_path;
-
+    
     if (!criteria_path) {
         criteria_path = path.join(process.cwd(), 'test', 'opunit.yml');
         if (!fs.existsSync(criteria_path)) {
@@ -61,16 +57,31 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
     }
 
     let connector = null;
-
+    let opts = {};
+    let optsCheck = {inCWD: false}; 
+    let name = null;
     if (connectorType === 'baker' && await fs.exists(path.join(connectorInfo.target, 'baker.yml'))) {
-        connector = new BakerConnector();
-    } else if (connectorType === 'vagrant' && (await (new VagrantConnector(false, connectorInfo.name)).getStatus(connectorInfo.name)).status === 'running') {
-        connector = new VagrantConnector(false, connectorInfo.name);
-    } else if (connectorType === 'docker' && await (new DockerConnector(connectorInfo.name)).containerExists()) {
-        connector = new DockerConnector(connectorInfo.name);
+        name = connectorInfo.target;
+    } else if (connectorType === 'vagrant') {
+        let checkVagrantRunning = await Connector.getConnector('vagrant', connectorInfo.name, {inCWD: false});
+        let getStatus  = await checkVagrantRunning.getStatus();
+        if(await getStatus.status === 'running'){
+            name = connectorInfo.name;
+            opts['inCWD'] = false;
+        }
+    } else if (connectorType === 'docker') {
+        let checkDockerRunning = await Connector.getConnector('docker', connectorInfo.name, opts);
+        let getStatus  = await checkDockerRunning.containerExists();
+        if(getStatus){
+            name = connectorInfo.name;
+        }
     } else if (connectorType === 'ssh' && connectorInfo.target.match(/[@:]+/)) {
-        connector = new SSHConnector(connectorInfo.target, connectorInfo.private_key);
+        name = connectorInfo.target; 
+        opts['privateKey'] = connectorInfo.private_key;
     }
+    if(name !== null){
+            connector = Connector.getConnector(connectorType, name, opts);
+        }
 
     if (!connector) {
         console.error(chalk.red(' => No running environment could be found with the given parameters:'), connectorType, connectorInfo);
@@ -80,8 +91,8 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
 
     try {
         // TODO: refactoring
-        let context = { bakerPath: connectorInfo.target };
-        await connector.ready(context);
+        //let context = { bakerPath: connectorInfo.target };
+        await connector.ready();
     } catch (error) {
         console.error(chalk.red(` => ${error}`));
         console.error(chalk.red(' => Skipping...'));
@@ -94,21 +105,46 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
 async function selectConnector(argv) {
     const cwd = process.cwd();
     let connector = null;
-
+    let name = null;
+    let opts = {};
+    let optsCheck = {inCWD: false}; 
+    let connectorTypeLocal;
     if (argv.env_address === 'local' || argv.env_address === 'localhost') {
-        connector = new LocalConnector();
+        connectorTypeLocal = 'local';
+        name = argv.env_address;
     } else if (!argv.env_address && await fs.exists(path.join(cwd, 'baker.yml'))) {
-        connector = new BakerConnector();
+        connectorTypeLocal = 'baker';
+        name = cwd;
     } else if (!argv.env_address && await fs.exists(path.join(cwd, 'Vagrantfile'))) {
-        connector = new VagrantConnector(true);
+        connectorTypeLocal = 'vagrant';
+        name = path.join(cwd, 'Vagrantfile');
+        opts['inCWD'] = true;
     } else if (argv.env_address && await fs.exists(path.resolve(argv.env_address))) {
-        connector = new BakerConnector();
+        connectorTypeLocal = 'baker';
+        name = path.resolve(argv.env_address);
     } else if (argv.env_address && argv.env_address.match(/[@:]+/)) {
-        connector = new SSHConnector(argv.env_address, argv.ssh_key);
-    } else if (argv.env_address && (await (new VagrantConnector(false, argv.env_address)).getStatus(argv.env_address)).status === 'running') {
-        connector = new VagrantConnector(false, argv.env_address);
-    } else if (argv.env_address && await (new DockerConnector(argv.env_address)).containerExists()) {
-        connector = new DockerConnector(argv.env_address || argv.container);
+        connectorTypeLocal = 'ssh';
+        name = argv.env_address;
+        opts['privateKey'] = argv.ssh_key;
+    } else if (argv.env_address) {
+        let checkVagrantRunning = await Connector.getConnector('vagrant', argv.env_address, {inCWD: false});
+        let getStatus  = await checkVagrantRunning.getStatus();
+        if(await getStatus.status === 'running'){
+            connectorTypeLocal = 'vagrant';
+            opts['inCWD'] = false;
+            name = argv.env_address;
+        }
+        else{
+            let checkDockerRunning = await (Connector.getConnector('docker', argv.env_address, opts));
+            let containerExists = await checkDockerRunning.containerExists();
+            if(containerExists){
+                connectorTypeLocal = 'docker';
+                name = (argv.env_address || argv.container);
+            }
+        }
+    }
+    if(name != null){
+        connector = Connector.getConnector(connectorTypeLocal, name, opts);
     }
 
     if (!connector) {
@@ -117,8 +153,8 @@ async function selectConnector(argv) {
     }
 
     try {
-        let context = { bakerPath: argv.env_address || process.cwd() };
-        await connector.ready(context);
+        //let context = { bakerPath: argv.env_address || process.cwd() };
+        await connector.ready();
     } catch (error) {
         console.error(chalk.red(` => ${error}`));
         process.exit(1);
@@ -137,7 +173,7 @@ yargs.command('profile <address>', 'Run check against specified profile ', (yarg
     // let file = await profile.get('CSC-DevOps/profile', '326.yml')
     let file = await profile.get(repo, yml);
 
-    await verify('local', file, new LocalConnector());
+    await verify('local', file, Connector.getConnector('local', '', {}));
 });
 
 yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {

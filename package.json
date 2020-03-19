@@ -27,7 +27,7 @@
     "chalk": "^3.0.0",
     "check-disk-space": "^2.0.0",
     "dockerode": "^3.1.0",
-    "fs-extra": "^8.0.0",
+    "fs-extra": "^9.0.0",
     "got": "^10.5.5",
     "infra.connectors": "github:ottomatica/infra.connectors",
     "js-yaml": "^3.12.0",

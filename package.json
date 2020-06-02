@@ -42,7 +42,7 @@
     "eslint": "^6.1.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
-    "standard-version": "^7.0.0"
+    "standard-version": "^8.0.0"
   },
   "config": {
     "commitizen": {

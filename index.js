@@ -44,7 +44,7 @@ async function main(env_address, criteria_path, connector) {
 
 async function selectConnectorFromInventory(connectorType, connectorInfo, argv) {
     // TODO: is this always needed?
-    let env_address = connectorInfo.target || connectorInfo.instance || connectorInfo.name;
+    let env_address = connectorInfo.target || connectorInfo.instance || connectorInfo.name || 'local';
     let criteria_path = connectorInfo.criteria_path || argv.criteria_path;
     
     if (!criteria_path) {
@@ -78,10 +78,13 @@ async function selectConnectorFromInventory(connectorType, connectorInfo, argv) 
     } else if (connectorType === 'ssh' && connectorInfo.target.match(/[@:]+/)) {
         name = connectorInfo.target; 
         opts['privateKey'] = connectorInfo.private_key;
+    } else if (connectorType === 'local' || connectorType === 'localhost') {
+        name = argv.env_address;
     }
-    if(name !== null){
-            connector = Connector.getConnector(connectorType, name, opts);
-        }
+
+    if(name !== null) {
+        connector = Connector.getConnector(connectorType, name, opts);
+    }
 
     if (!connector) {
         console.error(chalk.red(' => No running environment could be found with the given parameters:'), connectorType, connectorInfo);

@@ -1,6 +1,6 @@
 {
   "name": "opunit",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "opunit",
   "main": "index.js",
   "bin": "index.js",

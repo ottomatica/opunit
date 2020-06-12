@@ -200,6 +200,16 @@ service check
 
 ---
 
+`env` check verifies value of an environment variable.
+
+```yaml
+- env:
+  - APP_PORT=3002
+  - MONGO_PORT=27017
+```
+
+---
+
 ## Connectors
 Opunit has different connectors to be able to run checks on different kinds of environments. See below for description of each one and how they can be used.
 

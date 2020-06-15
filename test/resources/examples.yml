@@ -1,0 +1,48 @@
+- group:
+    description: "basic opunit checks"
+    checks:
+
+      - capability:
+          memory: 1
+          cores: 1
+          disks:
+            - location: /
+              size: 8
+
+      - availability:
+          port: 8080 || 3000
+          status: 200
+          url: /
+          timeout: 10000
+          setup:
+            cmd: node /tmp/app.js
+            wait_for: Started Application
+      - availability:
+          port: 9999
+          status: ECONNREFUSED
+
+      - version:
+         cmd: node --version
+         range: ^10.x.x
+
+      - reachable:
+        - google.com
+        - path: /tmp/foo
+          permission: 666
+
+      - contains:
+         file: /tmp/foo.json
+         query: .a
+         string: 'b'
+      - contains:
+         file: /tmp/foo.json
+         query: .d
+         string: 'b'
+         expect: false
+      - contains: 
+          file: /tmp/foo
+          string: 'findme'
+
+      # - service:
+      #    name: shouldntexist
+      #    status: none

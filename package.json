@@ -7,7 +7,8 @@
   "scripts": {
     "test": "jest --colors --noStackTrace",
     "commit": "git-cz",
-    "release": "standard-version"
+    "release": "standard-version",
+    "version": "npm version -m 'chore(release): %s'"
   },
   "repository": {
     "type": "git",

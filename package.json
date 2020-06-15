@@ -5,7 +5,7 @@
   "main": "index.js",
   "bin": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --colors --noStackTrace",
     "commit": "git-cz",
     "release": "standard-version"
   },
@@ -38,6 +38,7 @@
     "eslint": "^7.2.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
+    "jest": "^26.0.1",
     "standard-version": "^8.0.0"
   },
   "config": {

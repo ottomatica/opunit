@@ -210,6 +210,24 @@ service check
 
 ---
 
+`jenkins_job` check can verify status of a jenkins build job. 
+
+```yaml
+- jenkins_job:
+    name: myjenkinsjob
+    host: 123.123.123.123    # <--- optional, will use host from connector if not provided
+    port: 1234               # <--- optional, will use 8080 if not provided
+    status: success
+    user: admin
+    pass: admin
+```
+
+`status` = `success` | `failure`
+
+> _Note: jenkins_job uses Jenkins api to get the job status._
+
+---
+
 ## Connectors
 Opunit has different connectors to be able to run checks on different kinds of environments. See below for description of each one and how they can be used.
 

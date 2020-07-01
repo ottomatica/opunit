@@ -242,6 +242,8 @@ service check
     stdout: FOO
 ```
 
+> _Note: We recommend you use this generic `command` check only if there are no other opunit checks for your needs. Feel free to request addition of other opunit checks by opening an issue._
+
 ---
 
 ## Connectors

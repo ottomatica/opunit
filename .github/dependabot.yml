@@ -1,0 +1,12 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "11:00"
+    timezone: EST
+  open-pull-requests-limit: 10
+  target-branch: dev
+  reviewers:
+  - ssmirr

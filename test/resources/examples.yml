@@ -46,3 +46,13 @@
       # - service:
       #    name: shouldntexist
       #    status: none
+
+      - command: 
+          exec: echo 'FOO'
+          stdout: F.*O              # <--- regex or string
+          stderr: ''
+          exitCode: 0
+
+      - command: 
+          exec: echo 'FOO'
+          stdout: FOO

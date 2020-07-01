@@ -228,6 +228,22 @@ service check
 
 ---
 
+`command` check can run any arbitrary command in the target environment and test it's stdout, stderr, and/or exit code against the provided values (string or [regex](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions).
+
+```yaml
+- command: 
+    exec: echo 'FOO'
+    stdout: F.*O              # <--- regex or string
+    stderr: ''
+    exitCode: 0
+
+- command: 
+    exec: echo 'FOO'
+    stdout: FOO
+```
+
+---
+
 ## Connectors
 Opunit has different connectors to be able to run checks on different kinds of environments. See below for description of each one and how they can be used.
 

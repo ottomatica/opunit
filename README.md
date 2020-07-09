@@ -235,7 +235,7 @@ service check
     exec: echo 'FOO'
     stdout: F.*O              # <--- regex or string
     stderr: ''
-    exitCode: 0
+    exitCode: 0               # <--- alias for exitCode: code
 
 - command: 
     exec: echo 'FOO'

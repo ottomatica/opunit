@@ -1,4 +1,4 @@
-# Opunit🕵️‍ | [![dependencies Status](https://david-dm.org/ottomatica/opunit/status.svg)](https://david-dm.org/ottomatica/opunit)
+# Opunit🕵️‍ | ![CI](https://github.com/ottomatica/opunit/workflows/CI/badge.svg) [![dependencies Status](https://david-dm.org/ottomatica/opunit/status.svg)](https://david-dm.org/ottomatica/opunit)
 Simple tool for doing sanity checks on vms, and containers and remote servers. Written in pure node.js
 
 
@@ -77,6 +77,24 @@ contains check
    ✔   [/home/jenkins/settings/login.properties] contains [username: root] status: true
 ```
 
+`contains` check also supports checking value of a property in a JSON file. This check is useful for making sure a configuration file is using correct values. For example, given the JSON file below, the following check verifies `DriveName` property is set to `mysql`:
+
+```json
+{
+  "SqlSettings": {
+    "DriveName":"mysql"
+  }
+}
+```
+
+```yaml
+- contains: 
+    file: /path/config.json
+    query: .SqlSettings.DriverName
+    string: mysql
+    expect: true
+```
+
 ---
 
 `service` supports checking the status of a system service (e.g. systemd).
@@ -111,6 +129,19 @@ service check
   - reallyImportantFile.txt
 ```
 
+`reachable` check also supports checking permission, group and user of a given file or directory.
+
+```yaml
+# check if file permission is set to 660
+- path: /path/file
+  permission: 660
+
+# check if group `foo` has write permission to this file
+- path: /path/file
+  permission: w
+  group: foo
+```
+
 ---
 
 `capability` supports checking the environment satisfies that minimum size of memory, CPU cores, and free disk space.
@@ -126,14 +157,15 @@ service check
 
 ---
 
-`availability` supports running the specified command and waiting for an output, to then send a http request and check if it receives the expected status code.
+`availability` supports running the specified command and waiting for an output (optional), to then send a http request and check if it receives the expected status code. `or`, `||`, `and`, `&&` can be used to check more than one port.
 
 ``` yaml
 - availability:
-    port: 3000
+    port: 3000 || 5000 || 8080
     status: 200
     url: /
-    setup:
+    timeout: 10000                        # <--- optional
+    setup:                                # <--- optional
         cmd: baker run serve
         wait_for: Started Application
 ```
@@ -155,6 +187,62 @@ service check
 ``` yaml
 - timezone: EST
 ```
+
+---
+
+`valid` check verifies the given file's format is valid. Current supported file formats are `json`, `yaml`/`yml`.
+
+```yaml
+- valid:
+    - json: /path/config.json
+    - yaml: /path/playbook.yml
+```
+
+---
+
+`env` check verifies value of an environment variable.
+
+```yaml
+- env:
+  - APP_PORT=3002
+  - MONGO_PORT=27017
+```
+
+---
+
+`jenkins_job` check can verify status of a jenkins build job. 
+
+```yaml
+- jenkins_job:
+    name: myjenkinsjob
+    host: 123.123.123.123    # <--- optional, will use host from connector if not provided
+    port: 1234               # <--- optional, will use 8080 if not provided
+    status: success
+    user: admin
+    pass: admin
+```
+
+`status` = `success` | `failure`
+
+> _Note: jenkins_job uses Jenkins api to get the job status._
+
+---
+
+`command` check can run any arbitrary command in the target environment and test it's stdout, stderr, and/or exit code against the provided values (string or [regex](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)).
+
+```yaml
+- command: 
+    exec: echo 'FOO'
+    stdout: F.*O              # <--- regex or string
+    stderr: ''
+    exitCode: 0               # <--- alias for exitCode: code
+
+- command: 
+    exec: echo 'FOO'
+    stdout: FOO
+```
+
+> _Note: We recommend you use this generic `command` check only if there are no other opunit checks for your needs. Feel free to request addition of other opunit checks by opening an issue._
 
 ---
 

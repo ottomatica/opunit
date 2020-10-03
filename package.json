@@ -1,13 +1,14 @@
 {
   "name": "opunit",
-  "version": "0.5.1",
+  "version": "0.7.8",
   "description": "opunit",
   "main": "index.js",
   "bin": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --colors --noStackTrace",
     "commit": "git-cz",
-    "release": "standard-version"
+    "release": "standard-version",
+    "version": "npm version -m 'chore(release): %s'"
   },
   "repository": {
     "type": "git",
@@ -24,25 +25,24 @@
   },
   "homepage": "https://github.com/ottomatica/opunit#readme",
   "dependencies": {
-    "chalk": "^3.0.0",
-    "check-disk-space": "^2.0.0",
-    "dockerode": "^3.0.2",
-    "fs-extra": "^8.0.0",
+    "chalk": "^4.0.0",
+    "fs-extra": "^9.0.0",
+    "got": "^11.2.0",
     "infra.connectors": "github:ottomatica/infra.connectors",
+    "jenkins": "^0.28.0",
     "js-yaml": "^3.12.0",
-    "request": "^2.88.0",
-    "semver": "^7.1.1",
-    "ssh2": "^0.8.2",
-    "systeminformation": "^4.21.1",
-    "yargs": "^15.0.1"
+    "semver": "^7.1.3",
+    "yargs": "^15.0.1",
+    "uid-number": "^0.0.6"
   },
   "devDependencies": {
-    "commitizen": "^4.0.1",
-    "cz-conventional-changelog": "^3.0.2",
-    "eslint": "^6.1.0",
+    "commitizen": "^4.1.2",
+    "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^7.2.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
-    "standard-version": "^7.0.0"
+    "jest": "^26.0.1",
+    "standard-version": "^8.0.0"
   },
   "config": {
     "commitizen": {

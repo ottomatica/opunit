@@ -1,6 +1,162 @@
-# Changelog
-
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+
+## [0.7.6](https://github.com/ottomatica/opunit/compare/v0.7.5...v0.7.6) (2020-06-06)
+
+
+### Bug Fixes
+
+* fixing ssh reachable check (~) ([b3e65c5](https://github.com/ottomatica/opunit/commit/b3e65c5a4530f4278e7187433770a5a4fba7bbd5))
+
+
+
+## [0.7.5](https://github.com/ottomatica/opunit/compare/v0.7.4...v0.7.5) (2020-06-05)
+
+
+### Bug Fixes
+
+* fixing ssh contains check (~) ([c1ebf14](https://github.com/ottomatica/opunit/commit/c1ebf14584fabdd892ba7e73e93f88fd51a81f44))
+
+
+
+## [0.7.4](https://github.com/ottomatica/opunit/compare/v0.7.3...v0.7.4) (2020-06-03)
+
+
+### Features
+
+* setting timeout in availability check args + ([781e7f1](https://github.com/ottomatica/opunit/commit/781e7f1b30bbb20086e15ec0edea1dd50086d900))
+
+
+
+## [0.7.3](https://github.com/ottomatica/opunit/compare/v0.7.2...v0.7.3) (2020-06-03)
+
+
+### Features
+
+* supporting local connector in inventory ([625e16f](https://github.com/ottomatica/opunit/commit/625e16ff96f6d1ed33fa6a4926142e2542f97005))
+
+
+
+## [0.7.2](https://github.com/ottomatica/opunit/compare/v0.7.1...v0.7.2) (2020-06-02)
+
+
+### Features
+
+* add query to report in json contains check ([da1f383](https://github.com/ottomatica/opunit/commit/da1f383372f2e080d368c4351c0f851800e6a658))
+
+
+
+## [0.7.1](https://github.com/ottomatica/opunit/compare/v0.7.0...v0.7.1) (2020-06-02)
+
+
+### Features
+
+* and/or support in availability port ([c8730ff](https://github.com/ottomatica/opunit/commit/c8730ff0352d993817ffe1c6fd1e5766daf072c8))
+
+
+
+# [0.7.0](https://github.com/ottomatica/opunit/compare/v0.6.3...v0.7.0) (2020-05-16)
+
+
+### Features
+
+* adding 'query' in contains, an alt for jq ([14ae635](https://github.com/ottomatica/opunit/commit/14ae63524a65cdbd3565bc655144cbf0410d0ef6))
+* adding env check for environment variables ([59c9328](https://github.com/ottomatica/opunit/commit/59c93283a524e18cb12da4a8601cca3959c45b77))
+* check HyperV on win32 + msg in virt check ([d980ed2](https://github.com/ottomatica/opunit/commit/d980ed28f34d9ea2482fe42dfc21b7be93f2a447))
+
+
+
+## [0.6.3](https://github.com/ottomatica/opunit/compare/v0.6.2...v0.6.3) (2020-02-14)
+
+
+### Bug Fixes
+
+* update infra.connectors for exec bug fix ([ce17c3d](https://github.com/ottomatica/opunit/commit/ce17c3d68ce521220711c8ff32765fa61d5d3789))
+
+
+
+## [0.6.2](https://github.com/ottomatica/opunit/compare/v0.6.1...v0.6.2) (2020-02-14)
+
+
+### Bug Fixes
+
+* updating infra.connectors for exec fix ([0090ab1](https://github.com/ottomatica/opunit/commit/0090ab19e735498b7ac201f3d9f05ffdb1dac071))
+
+
+
+## [0.6.1](https://github.com/ottomatica/opunit/compare/v0.6.0...v0.6.1) (2020-02-13)
+
+### Build System
+
+* **deps:** [feature] updating infra.connectors ([3647b82](https://github.com/ottomatica/opunit/commit/3647b8212f3a9af49e7c690d7b8ea69091ec9535))
+
+
+# [0.6.0](https://github.com/ottomatica/opunit/compare/v0.5.1...v0.6.0) (2020-02-13)
+
+
+### Features
+
+* adding a msg for reachability permissions ([2c90f58](https://github.com/ottomatica/opunit/commit/2c90f588bf4770bc2c451ff31cee7b21d1ebe75b))
+* adding jq queries in contains check ([9040c69](https://github.com/ottomatica/opunit/commit/9040c699063e402f393293fc208c3834780a4c09))
+* adding valid check (JSON validation) ([649118d](https://github.com/ottomatica/opunit/commit/649118d2dacf9a1f66ade03f05136cfb9e4c9688))
+* adding valid check (YAML validation) ([736a27b](https://github.com/ottomatica/opunit/commit/736a27b088284d1a740db4d381314b79b2666241))
+* use https in availability check, if port=443 ([ef242e3](https://github.com/ottomatica/opunit/commit/ef242e3dcba00d20ff68b8879612b399a8b670a0))
+* remove jq from report if jq is not used ([de75ec5](https://github.com/ottomatica/opunit/commit/de75ec574bd460a25aa460954f20c036f1c4e2a4)), closes [#204](https://github.com/ottomatica/opunit/issues/204)
+* usr/grp + part permission in reachable (PoC) ([4bb9fe3](https://github.com/ottomatica/opunit/commit/4bb9fe3057f409e6831970a79fb95ac96a957575))
+* usr/grp with octal permission in  reachable ([f15b21d](https://github.com/ottomatica/opunit/commit/f15b21de625cd6c11714f67735a44ce52ca66448))
+* valid checks for local connector ([c162191](https://github.com/ottomatica/opunit/commit/c162191a58f9f4a1e3279fc1282c1f5aeb31869e))
+
+### Bugs
+
+* set rejectUnauthorized=false in availability ([f5d53e3](https://github.com/ottomatica/opunit/commit/f5d53e3a639cf66c9e1df6bd83a7e23a2dcbb4a1))
+
+
+## [0.5.1](https://github.com/ottomatica/opunit/compare/v0.5.0...v0.5.1)
+
+### Bug Fixes
+
+* better msg for file permission ([b77a7e4](https://github.com/ottomatica/opunit/commit/2a14b3793c2131eb5a0ad4da410224f7fc7456ed))
+
+
+## [0.5.0](https://github.com/ottomatica/opunit/compare/v0.4.6...v0.5.0)
+
+### Bug Fixes
+
+* fixing missing function in contains ([b77a7e4](https://github.com/ottomatica/opunit/commit/b77a7e473a150405cd0d7eb1763eaf45cf6235db))
+* fixing missing function in contains ([9c901b5](https://github.com/ottomatica/opunit/commit/9c901b5d6e994499f4cd9662f17a8809be1d626f))
+* fixing missing function in contains ([b259afa](https://github.com/ottomatica/opunit/commit/b259afa0b14baa2d5ea1f396d68eaf4179ff88ff))
+
+## [0.4.6](https://github.com/ottomatica/opunit/compare/v0.4.5...v0.4.6)
+
+### Bug Fixes
+
+* Improve printing of carriage returns/newlines. ([66e87cf](https://github.com/ottomatica/opunit/commit/66e87cf2ea32e04f2af340b80fff9f5a38c42c6c))
+
+
+## [0.4.5](https://github.com/ottomatica/opunit/compare/v0.4.4...v0.4.5)
+
+### Bug Fixes
+
+* allow contains check to receive expect:false ([beeca44](https://github.com/ottomatica/opunit/commit/beeca4493b7fa6ba34c237c0b768d7b17b39cd5a))
+
+
+### Features
+
+* updating reachable to check permission ([dc1cee0](https://github.com/ottomatica/opunit/commit/dc1cee03854ff3b78ddc2db1b651be46c891c84c))
+* using octal permission in reachable check ([4788790](https://github.com/ottomatica/opunit/commit/47887903fad11cddaa30d4a851d73ef831bf75d7))
+
+
+## [0.4.4](https://github.com/ottomatica/opunit/compare/v0.4.3...v0.4.4) (2020-01-29)
+
+
+### Bug Fixes
+
+* using resolvePath for ssh key path ([9d45e18](https://github.com/ottomatica/opunit/commit/9d45e18b4a3b934296c8bc22c4cebbab99acb3f1))
+
+### Features
+
+* VT check for ssh environments ([#155](https://github.com/ottomatica/opunit/issues/155)) ([e256732](https://github.com/ottomatica/opunit/commit/e256732e057ef46b87a844ffb8cc719bcebb1402))
+
 
 ### [0.4.3](https://github.com/ottomatica/opunit/compare/v0.4.2...v0.4.3) (2019-08-18)
 

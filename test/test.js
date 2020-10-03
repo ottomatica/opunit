@@ -6,7 +6,7 @@ describe('Opunit Tests', () => {
     let sshConfig = null;
     beforeAll(() => {
         execSync('chmod +x test/resources/init.sh && ./test/resources/init.sh', {stdio: 'inherit'});
-        execSync('bakerx pull ottomatica/bakerx#images bionic-node', {stdio: 'inherit'});
+        execSync('bakerx pull bionic-node ottomatica/bakerx#images', {stdio: 'inherit'});
         execSync(`bakerx run opunit-test-vm bionic-node --ip ${HOST} --memory 1024 --up test/resources/init.sh`, {stdio: 'inherit'});
 
         sshConfig = JSON.parse(execSync(`bakerx ssh-info opunit-test-vm --format json`).toString().trim());

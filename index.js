@@ -25,7 +25,7 @@ async function verify(env_address, criteria_path, connector) {
         console.log(chalk`\n\t{bold ${group.description}\n}`);
 
         for (let check of group.checks) {
-            let instance = new check.module(connector, reporter);
+            let instance = new check.module(connector, reporter, check.args);
 
             console.log(chalk`\t{white ${check.name} check}`);
             let results = await instance.check(context, check.args);
@@ -34,6 +34,47 @@ async function verify(env_address, criteria_path, connector) {
             }
             instance.report(results);
         }
+
+        if( group.any.length > 0 ) {
+            let cachedChecks = [];
+            for( var check of group.any ) {
+                let instance = new check.module(connector, reporter, check.args);
+                let results = await instance.check(context, check.args);
+                let cache = {};
+                cache.results = results;
+                cache.instance = instance;
+                cachedChecks.push(cache);
+            };
+            let passedIndex = cachedChecks.findIndex( (cache) => cache.results.status == true);
+            let anyPassed;
+            if( passedIndex > -1 ) {
+                anyPassed = group.any[passedIndex];
+            }
+
+            if( anyPassed ) {
+                console.log(chalk`\t{green At least one of the following checks passed:}`);
+                console.log(chalk`\t{white ${anyPassed.name} check}`);
+                let results = cachedChecks[passedIndex].results;
+                if (anyPassed.args && anyPassed.args.comment) {
+                    console.log(chalk`\t\t{italic.gray ${anyPassed.args.comment}}`);
+                }
+                cachedChecks[passedIndex].instance.report(results);
+            } else {
+                console.log(chalk`\t{red None of the following checks passed:}`);
+
+                let i = 0;
+                for (let check of group.any) {
+                    console.log(chalk`\t{white ${check.name} check}`);
+                    let cache = cachedChecks[i++];
+                    let results = cache.results;
+                    if (check.args && check.args.comment) {
+                        console.log(chalk`\t\t{italic.gray ${check.args.comment}}`);
+                    }
+                    cache.instance.report(results);
+                }
+            }
+        }
+
     }
     reporter.summary();
 }

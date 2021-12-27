@@ -1,4 +1,4 @@
-# Opunit🕵️‍ | ![CI](https://github.com/ottomatica/opunit/workflows/CI/badge.svg) [![dependencies Status](https://david-dm.org/ottomatica/opunit/status.svg)](https://david-dm.org/ottomatica/opunit)
+# Opunit🕵️‍ | ![CI](https://github.com/ottomatica/opunit/workflows/CI/badge.svg)
 Simple tool for doing sanity checks on vms, and containers and remote servers. Written in pure node.js
 
 

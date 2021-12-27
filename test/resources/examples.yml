@@ -10,16 +10,18 @@
               size: 8
 
       - availability:
-          port: 8080 || 3000
+          port: 8080
           status: 200
           url: /
-          timeout: 10000
+          timeout: 3000
           setup:
-            cmd: node /tmp/app.js
+            cmd: node test/resources/app.js
             wait_for: Started Application
-      - availability:
-          port: 9999
-          status: ECONNREFUSED
+
+      # - availability:
+      #     port: 9999
+      #     timeout: 1000
+      #     status: ECONNREFUSED
 
       - version:
          cmd: node --version
@@ -27,20 +29,20 @@
 
       - reachable:
         - google.com
-        - path: /tmp/foo
-          permission: 666
+        - path: test/resources/init.sh
+          permission: 755
 
       - contains:
-         file: /tmp/foo.json
-         query: .a
-         string: 'b'
+         file: test/resources/files/foo.json
+         query: .value
+         string: 'key'
       - contains:
-         file: /tmp/foo.json
-         query: .d
-         string: 'b'
+         file: test/resources/files/foo.json
+         query: .doesnotexist
+         string: 'key'
          expect: false
       - contains: 
-          file: /tmp/foo
+          file: test/resources/files/foo
           string: 'findme'
 
       # - service:

@@ -4,7 +4,7 @@ Simple tool for doing sanity checks on vms, and containers and remote servers. W
 
 ## Install with npm
 ```
-npm install -g opunit
+npm install ottomatica/opunit -g
 ```
 
 <p align="center">

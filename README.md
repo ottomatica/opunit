@@ -8,7 +8,7 @@ npm install ottomatica/opunit -g
 ```
 
 <p align="center">
-<img src="doc/img/opunit.png">
+<img width=800 src="doc/img/opunit.png">
 </p>
 
 ## Using Opunit

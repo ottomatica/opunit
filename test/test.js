@@ -14,21 +14,21 @@ describe('Opunit Tests', () => {
         // execSync(`bakerx run opunit-test-vm bionic-node --ip ${HOST} --memory 1024 --up test/resources/init.sh`, {stdio: 'inherit'});
 
         // sshConfig = JSON.parse(execSync(`bakerx ssh-info opunit-test-vm --format json`).toString().trim());
-        conn = require("infra.connectors").getConnector("docker", "opunit_test_container");
+        // conn = require("infra.connectors").getConnector("docker", "opunit_test_container");
 
     })
 
     afterAll(() => {
         // delete test container
-        conn.delete();
+        // conn.delete();
 
         
         // delete test files
-        execSync('rm /tmp/foo /tmp/foo.json /tmp/foo.yml /tmp/app.js').toString();
+        // execSync('rm /tmp/foo /tmp/foo.json /tmp/foo.yml /tmp/app.js')
     });
 
     test('Run opunit checks on localhost', () => {
-        execSync('node index.js verify local -c test/resources/examples.yml', { stdio: 'inherit' }).toString();
+        execSync('node index.js verify local -c test/resources/examples.yml', { stdio: 'inherit' })
     });
 
     // test('Running opunit checks on a VM using ssh connector', () => {

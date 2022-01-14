@@ -27,8 +27,12 @@
          cmd: node --version
          range: ^10.x.x
 
-      - reachable:
+      - resolvable:
         - google.com
+        - github.com
+#       - zzznoopebaddomain222.fake
+      - reachable:
+        - test/resources
         - path: test/resources/init.sh
           permission: 755
 

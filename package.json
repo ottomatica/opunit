@@ -28,7 +28,7 @@
     "chalk": "^4.0.0",
     "fs-extra": "^9.0.0",
     "got": "^11.8.3",
-    "infra.connectors": "git+https://github.com/ottomatica/infra.connectors",
+    "infra.connectors": "git+https://chrisparnin@github.com/ottomatica/infra.connectors",
     "jenkins": "^0.28.1",
     "js-yaml": "^4.1.0",
     "semver": "^7.1.3",

@@ -24,6 +24,6 @@ jobs:
     # - name: Install bakerx
     #   run: sudo npm install -g ottomatica/bakerx
     - name: Install opunit dependencies
-      run: npm i
+      run: npm ci
     - name: Run tests
       run: npm test

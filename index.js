@@ -245,7 +245,7 @@ yargs.command('verify [env_address]', 'Verify an instance', (yargs) => {
     });
 }, async (argv) => {
     if (argv.inventory) {
-        let inventory = yaml.safeLoad(await fs.readFile(argv.inventory, 'utf8'));
+        let inventory = yaml.load(await fs.readFile(argv.inventory, 'utf8'));
         for (let group of inventory) {
             let connectorType = Object.keys(group)[0];
 
